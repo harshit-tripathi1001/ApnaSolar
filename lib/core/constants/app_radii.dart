@@ -22,6 +22,7 @@ class AppRadii {
   static const BorderRadius xl = BorderRadius.all(rXl);
   static const BorderRadius full = BorderRadius.all(rFull);
 
+  /// Card convenience radii
   static const BorderRadius card = lg;
   static const BorderRadius cardSm = sm;
 
