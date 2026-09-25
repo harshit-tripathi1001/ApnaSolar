@@ -7,13 +7,15 @@ import '../../core/theme/app_typography.dart';
 
 enum AppButtonVariant { primary, radiant, secondary, outline, ghost }
 
-/// Reusable pill-shaped button adhering to ApnaSolar design guidelines.
+/// Reusable pill-shaped button adhering to Stitch ApnaSolar design guidelines.
 class AppButton extends StatelessWidget {
   final String label;
   final VoidCallback? onPressed;
   final AppButtonVariant variant;
   final IconData? leadingIcon;
+  final Color? leadingIconColor;
   final IconData? trailingIcon;
+  final bool showTrailingArrowBadge;
   final bool isLoading;
   final double? width;
   final double height;
@@ -25,7 +27,9 @@ class AppButton extends StatelessWidget {
     required this.onPressed,
     this.variant = AppButtonVariant.primary,
     this.leadingIcon,
+    this.leadingIconColor,
     this.trailingIcon,
+    this.showTrailingArrowBadge = false,
     this.isLoading = false,
     this.width,
     this.height = 54.0,
@@ -41,13 +45,13 @@ class AppButton extends StatelessWidget {
 
     switch (variant) {
       case AppButtonVariant.primary:
-        backgroundColor = AppColors.primaryContainer;
+        backgroundColor = AppColors.primary;
         foregroundColor = AppColors.onPrimary;
         shadows = const [
           BoxShadow(
-            color: Color(0x33003323),
-            blurRadius: 16,
-            offset: Offset(0, 6),
+            color: Color(0x40003323),
+            blurRadius: 20,
+            offset: Offset(0, 8),
           ),
         ];
         break;
@@ -63,8 +67,8 @@ class AppButton extends StatelessWidget {
         ];
         break;
       case AppButtonVariant.secondary:
-        backgroundColor = AppColors.secondaryContainerLight;
-        foregroundColor = AppColors.primaryContainer;
+        backgroundColor = AppColors.secondaryContainer;
+        foregroundColor = AppColors.onSecondaryContainer;
         break;
       case AppButtonVariant.outline:
         backgroundColor = Colors.transparent;
@@ -80,56 +84,117 @@ class AppButton extends StatelessWidget {
         break;
     }
 
-    Widget content = Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (leadingIcon != null && !isLoading) ...[
-          Icon(leadingIcon, size: 20, color: foregroundColor),
-          const SizedBox(width: AppSpacing.spaceSm),
-        ],
-        if (isLoading)
-          SizedBox(
-            width: 20,
-            height: 20,
-            child: CircularProgressIndicator(
-              strokeWidth: 2.2,
-              valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
-            ),
-          )
-        else
-          Flexible(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: subtitle != null
-                  ? CrossAxisAlignment.start
-                  : CrossAxisAlignment.center,
-              children: [
+    Widget content;
+
+    if (showTrailingArrowBadge) {
+      content = Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (leadingIcon != null && !isLoading) ...[
+                Icon(
+                  leadingIcon,
+                  size: 20,
+                  color: leadingIconColor ?? AppColors.tertiaryFixed,
+                ),
+                const SizedBox(width: AppSpacing.spaceSm),
+              ],
+              if (isLoading)
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2.2,
+                    valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
+                  ),
+                )
+              else
                 Text(
                   label,
-                  style: AppTypography.labelLg.copyWith(color: foregroundColor),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+                  style: AppTypography.labelLg.copyWith(
+                    color: foregroundColor,
+                    letterSpacing: 0.1,
+                  ),
                 ),
-                if (subtitle != null)
+            ],
+          ),
+          Container(
+            width: 32,
+            height: 32,
+            decoration: const BoxDecoration(
+              color: AppColors.secondaryFixed,
+              shape: BoxShape.circle,
+            ),
+            child: const Center(
+              child: Icon(
+                Icons.arrow_forward,
+                size: 18,
+                color: AppColors.onSecondaryFixed,
+              ),
+            ),
+          ),
+        ],
+      );
+    } else {
+      content = Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (leadingIcon != null && !isLoading) ...[
+            Icon(
+              leadingIcon,
+              size: 20,
+              color: leadingIconColor ?? foregroundColor,
+            ),
+            const SizedBox(width: AppSpacing.spaceSm),
+          ],
+          if (isLoading)
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2.2,
+                valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
+              ),
+            )
+          else
+            Flexible(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: subtitle != null
+                    ? CrossAxisAlignment.start
+                    : CrossAxisAlignment.center,
+                children: [
                   Text(
-                    subtitle!,
-                    style: AppTypography.labelMd.copyWith(
-                      color: foregroundColor.withValues(alpha: 0.8),
-                      fontSize: 11,
+                    label,
+                    style: AppTypography.labelLg.copyWith(
+                      color: foregroundColor,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-              ],
+                  if (subtitle != null)
+                    Text(
+                      subtitle!,
+                      style: AppTypography.labelMd.copyWith(
+                        color: foregroundColor.withValues(alpha: 0.8),
+                        fontSize: 11,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                ],
+              ),
             ),
-          ),
-        if (trailingIcon != null && !isLoading) ...[
-          const SizedBox(width: AppSpacing.spaceSm),
-          Icon(trailingIcon, size: 20, color: foregroundColor),
+          if (trailingIcon != null && !isLoading) ...[
+            const SizedBox(width: AppSpacing.spaceSm),
+            Icon(trailingIcon, size: 20, color: foregroundColor),
+          ],
         ],
-      ],
-    );
+      );
+    }
 
     return Container(
       width: width,
@@ -142,7 +207,6 @@ class AppButton extends StatelessWidget {
         color: onPressed != null
             ? backgroundColor
             : AppColors.surfaceContainerHighest,
-        borderRadius: AppRadii.full,
         shape: RoundedRectangleBorder(
           borderRadius: AppRadii.full,
           side: borderSide,
