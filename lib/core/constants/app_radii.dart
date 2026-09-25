@@ -22,9 +22,9 @@ class AppRadii {
   static const BorderRadius xl = BorderRadius.all(rXl);
   static const BorderRadius full = BorderRadius.all(rFull);
 
-  /// Card convenience radii
+  /// Card-specific aliases
   static const BorderRadius card = lg;
-  static const BorderRadius cardSm = sm;
+  static const BorderRadius cardSm = md;
 
   /// Top rounded sheets
   static const BorderRadius topLg = BorderRadius.vertical(top: rLg);

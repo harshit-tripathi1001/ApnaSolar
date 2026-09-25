@@ -60,11 +60,12 @@ class SolarCalculatorService {
     // Monthly units generated
     final monthlyUnits = capacityKw * 5.2 * 30.0 * 0.78;
     final grossSavings = monthlyUnits * electricityTariffPerKwh;
-    final monthlySavings = grossSavings > (currentMonthlyBill * 0.88)
-        ? (currentMonthlyBill * 0.88)
+    final maxBillSavings = currentMonthlyBill - 500.0;
+    final monthlySavings = grossSavings > maxBillSavings
+        ? maxBillSavings
         : grossSavings;
     final projectedBill = (currentMonthlyBill - monthlySavings).clamp(
-      350.0,
+      500.0,
       double.infinity,
     );
     final annualSavings = monthlySavings * 12.0;
