@@ -22,6 +22,9 @@ class AppRadii {
   static const BorderRadius xl = BorderRadius.all(rXl);
   static const BorderRadius full = BorderRadius.all(rFull);
 
+  static const BorderRadius card = lg;
+  static const BorderRadius cardSm = sm;
+
   /// Top rounded sheets
   static const BorderRadius topLg = BorderRadius.vertical(top: rLg);
   static const BorderRadius topXl = BorderRadius.vertical(top: rXl);
