@@ -273,10 +273,10 @@ class WelcomeScreen extends StatelessWidget {
               // Primary CTA
               AppButton(
                 label: 'Get Started',
-                subtitle: 'Instant satellite preview',
+                subtitle: 'Enter Home Dashboard',
                 trailingIcon: Icons.arrow_forward_rounded,
                 onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.confirmLocation),
+                    Navigator.pushNamed(context, AppRoutes.home),
               ),
               const SizedBox(height: AppSpacing.spaceSm),
 
@@ -303,10 +303,13 @@ class WelcomeScreen extends StatelessWidget {
                     color: AppColors.secondary,
                   ),
                   const SizedBox(width: AppSpacing.spaceXs),
-                  Text(
-                    'MNRE Accredited • 25-Year Panel Warranty',
-                    style: AppTypography.labelMd.copyWith(
-                      color: AppColors.outline,
+                  Flexible(
+                    child: Text(
+                      'MNRE Accredited • 25-Year Panel Warranty',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.outline,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

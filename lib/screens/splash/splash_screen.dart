@@ -19,14 +19,17 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreenState extends State<SplashScreen> {
   Timer? _navTimer;
 
+  void _navigateNext() {
+    _navTimer?.cancel();
+    if (mounted) {
+      Navigator.pushReplacementNamed(context, AppRoutes.welcome);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    _navTimer = Timer(const Duration(milliseconds: 1500), () {
-      if (mounted) {
-        Navigator.pushReplacementNamed(context, AppRoutes.welcome);
-      }
-    });
+    _navTimer = Timer(const Duration(milliseconds: 1500), _navigateNext);
   }
 
   @override
@@ -39,8 +42,11 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.surfaceContainerLow,
-      body: Center(
-        child: Column(
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: _navigateNext,
+        child: Center(
+          child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
@@ -106,6 +112,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

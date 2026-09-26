@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:apnasolar/app/routes.dart';
 import 'package:apnasolar/screens/location/confirm_location_screen.dart';
+import 'package:apnasolar/screens/property/property_details_screen.dart';
 import 'package:apnasolar/screens/roof_drawing/satellite_roof_drawing_screen.dart';
 
 void main() {
@@ -22,6 +23,8 @@ void main() {
             routes: {
               AppRoutes.confirmLocation: (context) =>
                   const ConfirmLocationScreen(),
+              AppRoutes.property: (context) =>
+                  const PropertyDetailsScreen(),
               AppRoutes.satelliteRoofDrawing: (context) =>
                   const SatelliteRoofDrawingScreen(),
             },
@@ -76,8 +79,17 @@ void main() {
         await tester.tap(find.textContaining('100 Feet Rd'));
         await tester.pump();
 
-        // 9. Test Confirm Location navigation
+        // 9. Test Confirm Location navigation to Property Details (Step 2 of 5)
         await tester.tap(find.text('Confirm Location'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump(const Duration(milliseconds: 500));
+
+        // Verify navigated to PropertyDetailsScreen
+        expect(find.text('Step 2 of 5 · Property'), findsOneWidget);
+
+        // Tap forward to Roof Boundary (Step 3 of 5)
+        await tester.tap(find.text('Proceed to Rooftop Boundary'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
         await tester.pump(const Duration(milliseconds: 500));

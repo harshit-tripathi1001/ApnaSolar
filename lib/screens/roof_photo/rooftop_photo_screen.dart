@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
+import '../../services/solar_session_service.dart';
 import '../common/base_placeholder_screen.dart';
 
 /// Rooftop Photo Screen (Stitch: d10b09a44dc24a2893b0af79cac292a0)
@@ -12,6 +13,7 @@ class RooftopPhotoScreen extends StatelessWidget {
     return BasePlaceholderScreen(
       title: 'Rooftop Photo Upload',
       stitchScreenId: 'd10b09a44dc24a2893b0af79cac292a0',
+      propertyAddress: SolarSessionState().selectedProperty.formattedAddress,
       description: 'Take or upload 2 to 4 photos of your terrace showing parapet, water tank, and sun line for enhanced computer vision accuracy.',
       icon: Icons.camera_alt_rounded,
       nextRoute: AppRoutes.aiRoofAnalysis,

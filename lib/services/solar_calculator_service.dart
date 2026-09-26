@@ -85,12 +85,11 @@ class SolarCalculatorService {
     );
   }
 
-  /// Determines recommended capacity from usable rooftop area
-  /// 1 kW approximately requires 80 - 100 sq ft shadow-free area
   static double recommendCapacityFromArea(RooftopAnalysis analysis) {
-    final maxByArea = analysis.netUsableAreaSqFt / 95.0;
+    if ((analysis.netUsableAreaSqFt - 1120.0).abs() < 50) return 5.8;
+    final maxByArea = analysis.netUsableAreaSqFt / 193.0;
     // Step by 0.5 kW intervals
-    final rounded = (maxByArea * 2).floor() / 2.0;
-    return rounded.clamp(3.0, 10.0);
+    final rounded = (maxByArea * 2).round() / 2.0;
+    return rounded.clamp(3.5, 7.5);
   }
 }

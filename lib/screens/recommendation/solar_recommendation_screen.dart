@@ -8,6 +8,7 @@ import '../../core/theme/app_typography.dart';
 import '../../models/financial_breakdown.dart';
 import '../../models/solar_estimate.dart';
 import '../../services/solar_calculator_service.dart';
+import '../../services/solar_session_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/status_badge.dart';
 
@@ -46,7 +47,11 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
   @override
   void initState() {
     super.initState();
-    _selectedCapacityKw = widget.initialCapacityKw;
+    final session = SolarSessionState();
+    final effectiveCapacity = widget.initialCapacityKw != 5.8
+        ? widget.initialCapacityKw
+        : session.selectedCapacityKw;
+    _selectedCapacityKw = effectiveCapacity;
     _recalculate();
 
     _animController = AnimationController(
@@ -79,14 +84,23 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
   }
 
   void _recalculate() {
+    final session = SolarSessionState();
     _solarEstimate = SolarCalculatorService.calculateEstimate(
       capacityKw: _selectedCapacityKw,
-      peakSunHours: 5.2,
+      peakSunHours: session.selectedProperty.peakSunHoursPerDay,
     );
+    final effectiveBill = widget.currentMonthlyBill != 3850.0
+        ? widget.currentMonthlyBill
+        : session.monthlyBill;
     _financials = SolarCalculatorService.calculateFinancials(
       capacityKw: _selectedCapacityKw,
-      currentMonthlyBill: widget.currentMonthlyBill,
+      currentMonthlyBill: effectiveBill,
     );
+    if (session.selectedCapacityKw != _selectedCapacityKw) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        session.setSelectedCapacity(_selectedCapacityKw);
+      });
+    }
   }
 
   String _formatCurrency(num value) {
@@ -97,7 +111,7 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
   }
 
   void _openCustomizerModal() {
-    double tempCapacity = _selectedCapacityKw;
+    double tempCapacity = _selectedCapacityKw.clamp(3.5, 7.5);
 
     showModalBottomSheet<void>(
       context: context,
@@ -430,7 +444,13 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
           Row(
             children: [
               InkWell(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacementNamed(context, AppRoutes.roofResult);
+                  }
+                },
                 borderRadius: AppRadii.full,
                 child: Container(
                   width: 36,

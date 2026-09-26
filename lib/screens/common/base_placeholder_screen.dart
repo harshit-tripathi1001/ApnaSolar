@@ -7,6 +7,8 @@ import '../../core/theme/app_typography.dart';
 import '../../widgets/common/app_card.dart';
 import '../../widgets/common/status_badge.dart';
 
+import '../../app/routes.dart';
+
 /// Clean, structured placeholder screen representing a Stitch screen instance.
 class BasePlaceholderScreen extends StatelessWidget {
   final String title;
@@ -15,6 +17,7 @@ class BasePlaceholderScreen extends StatelessWidget {
   final IconData icon;
   final String? nextRoute;
   final String? nextLabel;
+  final String? propertyAddress;
   final List<Widget>? quickNavActions;
 
   const BasePlaceholderScreen({
@@ -25,6 +28,7 @@ class BasePlaceholderScreen extends StatelessWidget {
     required this.icon,
     this.nextRoute,
     this.nextLabel,
+    this.propertyAddress,
     this.quickNavActions,
   });
 
@@ -38,7 +42,12 @@ class BasePlaceholderScreen extends StatelessWidget {
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.pop(context),
               )
-            : null,
+            : IconButton(
+                icon: const Icon(Icons.home_outlined),
+                tooltip: 'Return to Home',
+                onPressed: () =>
+                    Navigator.pushReplacementNamed(context, AppRoutes.home),
+              ),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -90,6 +99,41 @@ class BasePlaceholderScreen extends StatelessWidget {
                       style: AppTypography.bodyMd,
                       textAlign: TextAlign.center,
                     ),
+                    if (propertyAddress != null) ...[
+                      const SizedBox(height: AppSpacing.spaceSm),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryContainer.withValues(alpha: 0.5),
+                          borderRadius: AppRadii.full,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.location_on,
+                              size: 14,
+                              color: AppColors.secondary,
+                            ),
+                            const SizedBox(width: 4),
+                            Flexible(
+                              child: Text(
+                                propertyAddress!,
+                                style: AppTypography.labelMd.copyWith(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 11,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: AppSpacing.spaceMd),
                     Container(
                       padding: const EdgeInsets.symmetric(
@@ -130,6 +174,15 @@ class BasePlaceholderScreen extends StatelessWidget {
                 Text('Screen Navigation Flow', style: AppTypography.labelLg),
                 const SizedBox(height: AppSpacing.spaceSm),
                 ...quickNavActions!,
+              ],
+              if (nextRoute != AppRoutes.home) ...[
+                const SizedBox(height: AppSpacing.spaceSm),
+                TextButton.icon(
+                  onPressed: () =>
+                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false),
+                  icon: const Icon(Icons.dashboard_rounded, size: 16),
+                  label: const Text('Return to Home Dashboard'),
+                ),
               ],
               const SizedBox(height: AppSpacing.spaceXl),
             ],

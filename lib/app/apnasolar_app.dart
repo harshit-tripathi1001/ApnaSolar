@@ -14,6 +14,7 @@ import '../screens/how_it_works/how_it_works_screen.dart';
 import '../screens/installers/nearby_installers_screen.dart';
 import '../screens/location/confirm_location_screen.dart';
 import '../screens/panel_layout/panel_layout_3d_screen.dart';
+import '../screens/property/property_details_screen.dart';
 import '../screens/project_dashboard/project_dashboard_screen.dart';
 import '../screens/quotation/quotation_analysis_screen.dart';
 import '../screens/recommendation/solar_recommendation_screen.dart';
@@ -45,6 +46,7 @@ class ApnaSolarApp extends StatelessWidget {
         AppRoutes.howItWorks: (context) => const HowItWorksScreen(),
         AppRoutes.home: (context) => const HomeScreen(),
         AppRoutes.confirmLocation: (context) => const ConfirmLocationScreen(),
+        AppRoutes.property: (context) => const PropertyDetailsScreen(),
         AppRoutes.satelliteRoofDrawing: (context) =>
             const SatelliteRoofDrawingScreen(),
         AppRoutes.rooftopPhoto: (context) => const RooftopPhotoScreen(),

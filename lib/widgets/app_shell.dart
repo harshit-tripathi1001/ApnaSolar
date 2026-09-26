@@ -8,6 +8,7 @@ import '../core/constants/app_radii.dart';
 import '../core/constants/app_spacing.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_typography.dart';
+import '../services/solar_session_service.dart';
 
 /// AppShell provides the Stitch-spec global frosted header and floating bottom navigation bar.
 class AppShell extends StatelessWidget {
@@ -165,7 +166,7 @@ class AppShell extends StatelessWidget {
                                   ),
                                   const SizedBox(width: 2),
                                   Text(
-                                    'Bengaluru, KA',
+                                    '${SolarSessionState().selectedProperty.city}, ${SolarSessionState().selectedProperty.state == "Karnataka" ? "KA" : SolarSessionState().selectedProperty.state}',
                                     style: AppTypography.labelMd.copyWith(
                                       color: AppColors.onSurfaceVariant,
                                       fontSize: 12,

@@ -5,6 +5,7 @@ import '../../core/constants/app_radii.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../services/solar_session_service.dart';
 import '../../widgets/app_shell.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_card.dart';
@@ -50,11 +51,21 @@ class _HomeScreenState extends State<HomeScreen>
           CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
         );
 
+    SolarSessionState().addListener(_onSessionChanged);
     _animController.forward();
+  }
+
+  void _onSessionChanged() {
+    if (mounted) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) setState(() {});
+      });
+    }
   }
 
   @override
   void dispose() {
+    SolarSessionState().removeListener(_onSessionChanged);
     _animController.dispose();
     super.dispose();
   }
@@ -237,36 +248,45 @@ class _HomeScreenState extends State<HomeScreen>
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         // Indiranagar, Bengaluru Location Pill
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-          decoration: BoxDecoration(
-            color: AppColors.surfaceContainer,
+        Flexible(
+          child: InkWell(
             borderRadius: AppRadii.full,
-            boxShadow: const [
-              BoxShadow(
-                color: Color(0x0A164A38),
-                blurRadius: 4,
-                offset: Offset(0, 1),
+            onTap: () => Navigator.pushNamed(context, AppRoutes.confirmLocation),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceContainer,
+                borderRadius: AppRadii.full,
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x0A164A38),
+                    blurRadius: 4,
+                    offset: Offset(0, 1),
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.location_on,
-                size: 15,
-                color: AppColors.secondary,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.location_on,
+                    size: 15,
+                    color: AppColors.secondary,
+                  ),
+                  const SizedBox(width: 4),
+                  Flexible(
+                    child: Text(
+                      '${SolarSessionState().selectedProperty.locality}, ${SolarSessionState().selectedProperty.city}',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 5),
-              Text(
-                'Indiranagar, Bengaluru',
-                style: AppTypography.labelMd.copyWith(
-                  color: AppColors.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+            ),
           ),
         ),
 
@@ -680,12 +700,16 @@ class _HomeScreenState extends State<HomeScreen>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Neighborhood Impact',
-              style: AppTypography.headlineSm.copyWith(
-                fontWeight: FontWeight.bold,
+            Flexible(
+              child: Text(
+                'Neighborhood Impact',
+                style: AppTypography.headlineSm.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
             ),
+            const SizedBox(width: 8),
             Text(
               'Indiranagar Ward 74',
               style: AppTypography.labelMd.copyWith(

@@ -5,6 +5,7 @@ import '../../core/constants/app_radii.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../services/solar_session_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/status_badge.dart';
 
@@ -47,8 +48,7 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
     });
   }
 
-  // Calculate dynamic rooftop area from vertex polygon
-  int get _computedUsableAreaSqFt {
+  double get _polygonRatio {
     // Gauss shoelace formula for normalized polygon area
     double area = 0.0;
     final n = _vertices.length;
@@ -61,8 +61,12 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
 
     // Normalizing multiplier calibrated for ~1,245 sq ft baseline
     const baselineNormalizedArea = 0.3472;
-    final ratio = (area / baselineNormalizedArea).clamp(0.7, 1.4);
-    return (1245 * ratio).round();
+    return (area / baselineNormalizedArea).clamp(0.7, 1.4);
+  }
+
+  // Calculate dynamic rooftop area from vertex polygon
+  int get _computedUsableAreaSqFt {
+    return (1245 * _polygonRatio).round();
   }
 
   double get _computedCapacityKwp {
@@ -82,7 +86,15 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
 
   Future<void> _handleProceed() async {
     setState(() => _isAnalyzing = true);
-    await Future.delayed(const Duration(milliseconds: 500));
+    final isDefault = (_polygonRatio - 1.0).abs() < 0.02;
+    final usable = isDefault ? 1120.0 : (1120.0 * _polygonRatio).roundToDouble();
+    final gross = isDefault ? 1440.0 : (1440.0 * _polygonRatio).roundToDouble();
+
+    SolarSessionState().updateRooftopAnalysis(
+      grossAreaSqFt: gross,
+      usableAreaSqFt: usable,
+    );
+    await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _isAnalyzing = false);
     Navigator.pushNamed(context, AppRoutes.aiRoofAnalysis);
@@ -125,7 +137,13 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
             children: [
               // Back Button
               InkWell(
-                onTap: () => Navigator.pop(context),
+                onTap: () {
+                  if (Navigator.canPop(context)) {
+                    Navigator.pop(context);
+                  } else {
+                    Navigator.pushReplacementNamed(context, AppRoutes.property);
+                  }
+                },
                 borderRadius: AppRadii.full,
                 child: Container(
                   width: 38,
@@ -143,28 +161,33 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
               ),
 
               // Step Counter Capsule
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.08),
-                  borderRadius: AppRadii.full,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const PulsingDot(size: 7, color: AppColors.secondary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Step 3 of 5 · Roof Boundary',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.primary,
-                        fontWeight: FontWeight.bold,
+              Flexible(
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 6,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withValues(alpha: 0.08),
+                    borderRadius: AppRadii.full,
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const PulsingDot(size: 7, color: AppColors.secondary),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          'Step 3 of 5 · Roof Boundary',
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
 
@@ -406,37 +429,42 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 6,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.surfaceContainerLowest.withValues(
-                            alpha: 0.95,
+                      Flexible(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
                           ),
-                          borderRadius: AppRadii.full,
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x0C000000),
-                              blurRadius: 6,
-                              offset: Offset(0, 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerLowest.withValues(
+                              alpha: 0.95,
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('✏️', style: TextStyle(fontSize: 12)),
-                            const SizedBox(width: 6),
-                            Text(
-                              'Drag pins to match terrace parapet',
-                              style: AppTypography.labelMd.copyWith(
-                                color: AppColors.onSurface,
-                                fontWeight: FontWeight.w600,
+                            borderRadius: AppRadii.full,
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x0C000000),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('✏️', style: TextStyle(fontSize: 12)),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  'Drag pins to match terrace parapet',
+                                  style: AppTypography.labelMd.copyWith(
+                                    color: AppColors.onSurface,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                       InkWell(
@@ -853,43 +881,49 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 32,
-                          height: 32,
-                          decoration: const BoxDecoration(
-                            color: AppColors.secondaryContainer,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.roofing,
-                            size: 18,
-                            color: AppColors.primary,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Terrace Analysis',
-                              style: AppTypography.labelLg.copyWith(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 32,
+                            height: 32,
+                            decoration: const BoxDecoration(
+                              color: AppColors.secondaryContainer,
+                              shape: BoxShape.circle,
                             ),
-                            Text(
-                              'Flat RCC Roof · Indiranagar 100ft Rd',
-                              style: AppTypography.bodyMd.copyWith(
-                                fontSize: 11,
-                                color: AppColors.onSurfaceVariant,
-                              ),
+                            child: const Icon(
+                              Icons.roofing,
+                              size: 18,
+                              color: AppColors.primary,
                             ),
-                          ],
-                        ),
-                      ],
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Terrace Analysis',
+                                  style: AppTypography.labelLg.copyWith(
+                                    color: AppColors.primary,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Text(
+                                  '${SolarSessionState().roofType} · ${SolarSessionState().selectedProperty.locality}',
+                                  style: AppTypography.bodyMd.copyWith(
+                                    fontSize: 11,
+                                    color: AppColors.onSurfaceVariant,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
+                    const SizedBox(width: 8),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 8,

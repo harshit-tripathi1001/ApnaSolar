@@ -8,6 +8,7 @@ import '../../core/map/mock_solar_map_canvas.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../models/property_location.dart';
+import '../../services/solar_session_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/status_badge.dart';
 
@@ -77,6 +78,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
   void initState() {
     super.initState();
     _mapController = SolarMapController();
+    _mapController.setProperty(SolarSessionState().selectedProperty);
     _searchController = TextEditingController(
       text: _mapController.property.formattedAddress,
     );
@@ -91,10 +93,11 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
 
   Future<void> _handleConfirmLocation() async {
     setState(() => _isConfirming = true);
-    await Future.delayed(const Duration(milliseconds: 400));
+    SolarSessionState().setProperty(_mapController.property);
+    await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
     setState(() => _isConfirming = false);
-    Navigator.pushNamed(context, AppRoutes.satelliteRoofDrawing);
+    Navigator.pushNamed(context, AppRoutes.property);
   }
 
   void _selectLocation(PropertyLocation loc) {
@@ -104,6 +107,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
       _showSuggestions = false;
       _mapController.recenterPin();
     });
+    SolarSessionState().setProperty(loc);
   }
 
   @override
@@ -166,7 +170,13 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
         children: [
           // Frosted Back Button
           InkWell(
-            onTap: () => Navigator.pop(context),
+            onTap: () {
+              if (Navigator.canPop(context)) {
+                Navigator.pop(context);
+              } else {
+                Navigator.pushReplacementNamed(context, AppRoutes.home);
+              }
+            },
             borderRadius: AppRadii.full,
             child: Container(
               width: 40,
@@ -560,7 +570,10 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 8,
+                      runSpacing: 4,
                       children: [
                         Text(
                           'Is this your home?',
@@ -569,7 +582,6 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 8),
                         Container(
                           padding: const EdgeInsets.symmetric(
                             horizontal: 6,

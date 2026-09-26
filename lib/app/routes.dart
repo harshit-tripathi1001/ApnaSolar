@@ -7,6 +7,7 @@ class AppRoutes {
   static const String howItWorks = '/how-it-works';
   static const String home = '/home';
   static const String confirmLocation = '/confirm-location';
+  static const String property = '/property';
   static const String satelliteRoofDrawing = '/satellite-roof-drawing';
   static const String rooftopPhoto = '/rooftop-photo';
   static const String aiRoofAnalysis = '/ai-roof-analysis';
