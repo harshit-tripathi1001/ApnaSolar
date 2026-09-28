@@ -20,11 +20,19 @@ class CostBreakdownScreen extends StatelessWidget {
       title: 'Simple, Honest Pricing',
       stitchScreenId: '4ead5303038c462988e392b0f92a109d',
       propertyAddress: session.selectedProperty.formattedAddress,
-      description: 'System size: $capacity kW | Gross turnkey: ₹$gross | Central DBT Subsidy: ₹$subsidy | Net payable: ₹$net.\nItemized breakdown: panels (48%), inverter (22%), structure (15%), meter & approvals (15%).',
+      description:
+          'System size: $capacity kW | Gross turnkey: ₹$gross | Central DBT Subsidy: ₹$subsidy | Net payable: ₹$net.\nItemized breakdown: panels (48%), inverter (22%), structure (15%), meter & approvals (15%).',
       icon: Icons.currency_rupee_rounded,
-      nextRoute: AppRoutes.subsidyPayback,
-      nextLabel: 'See Subsidy & Payback Period',
+      nextRoute: AppRoutes.solarReport,
+      nextLabel: 'Generate Official Audit Report (PDF)',
       quickNavActions: [
+        OutlinedButton.icon(
+          onPressed: () =>
+              Navigator.pushNamed(context, AppRoutes.subsidyPayback),
+          icon: const Icon(Icons.savings_rounded),
+          label: const Text('See PM Surya Ghar Subsidy Breakdown'),
+        ),
+        const SizedBox(height: 8),
         OutlinedButton.icon(
           onPressed: () =>
               Navigator.pushNamed(context, AppRoutes.quotationAnalysis),

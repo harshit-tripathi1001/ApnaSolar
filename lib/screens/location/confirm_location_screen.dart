@@ -201,32 +201,42 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
           ),
 
           // Step Badge Pill with Pulsing Dot
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-            decoration: BoxDecoration(
-              color: AppColors.surfaceContainerLowest.withValues(alpha: 0.95),
-              borderRadius: AppRadii.full,
-              boxShadow: const [
-                BoxShadow(
-                  color: Color(0x0A000000),
-                  blurRadius: 6,
-                  offset: Offset(0, 2),
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 6,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const PulsingDot(size: 7, color: AppColors.secondary),
-                const SizedBox(width: 6),
-                Text(
-                  'Step 1 of 5 · Location',
-                  style: AppTypography.labelMd.copyWith(
-                    color: AppColors.primary,
-                    fontWeight: FontWeight.bold,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerLowest.withValues(
+                    alpha: 0.95,
                   ),
+                  borderRadius: AppRadii.full,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x0A000000),
+                      blurRadius: 6,
+                      offset: Offset(0, 2),
+                    ),
+                  ],
                 ),
-              ],
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const PulsingDot(size: 7, color: AppColors.secondary),
+                    const SizedBox(width: 6),
+                    Text(
+                      'Step 1 of 5 · Location',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
 
@@ -582,33 +592,36 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 6,
-                            vertical: 2,
-                          ),
-                          decoration: BoxDecoration(
-                            color: AppColors.secondaryContainer,
-                            borderRadius: AppRadii.full,
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(
-                                Icons.check_circle,
-                                size: 12,
-                                color: AppColors.onSecondaryContainer,
-                              ),
-                              const SizedBox(width: 3),
-                              Text(
-                                'High Solar Yield',
-                                style: AppTypography.labelMd.copyWith(
-                                  fontSize: 10,
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.secondaryContainer,
+                              borderRadius: AppRadii.full,
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  size: 12,
                                   color: AppColors.onSecondaryContainer,
-                                  fontWeight: FontWeight.w600,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(width: 3),
+                                Text(
+                                  'High Solar Yield',
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontSize: 10,
+                                    color: AppColors.onSecondaryContainer,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ],
@@ -688,6 +701,7 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
               padding: const EdgeInsets.symmetric(vertical: 6),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.pan_tool,
@@ -695,11 +709,14 @@ class _ConfirmLocationScreenState extends State<ConfirmLocationScreen> {
                     color: AppColors.secondary,
                   ),
                   const SizedBox(width: 6),
-                  Text(
-                    'Move map to adjust pin',
-                    style: AppTypography.labelMd.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                      fontWeight: FontWeight.w600,
+                  Flexible(
+                    child: Text(
+                      'Move map to adjust pin',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

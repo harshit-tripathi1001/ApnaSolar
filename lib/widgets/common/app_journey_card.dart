@@ -35,36 +35,43 @@ class AppJourneyCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
-              Row(
-                children: [
-                  Container(
-                    width: 28,
-                    height: 28,
-                    decoration: const BoxDecoration(
-                      color: AppColors.secondaryContainer,
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.nature_people,
-                        size: 18,
-                        color: AppColors.secondary,
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: const BoxDecoration(
+                        color: AppColors.secondaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Center(
+                        child: Icon(
+                          Icons.nature_people,
+                          size: 18,
+                          color: AppColors.secondary,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: AppSpacing.spaceSm),
-                  Text(
-                    'Your Solar Journey',
-                    style: AppTypography.headlineSm.copyWith(
-                      color: AppColors.onSurface,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+                    const SizedBox(width: AppSpacing.spaceSm),
+                    Text(
+                      'Your Solar Journey',
+                      style: AppTypography.headlineSm.copyWith(
+                        color: AppColors.onSurface,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               StatusBadge(
                 label: 'Step $currentStep of $totalSteps',
@@ -96,43 +103,53 @@ class AppJourneyCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
-              Row(
-                children: [
-                  const Icon(
-                    Icons.check_circle,
-                    size: 16,
-                    color: AppColors.secondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    completedMilestone,
-                    style: AppTypography.bodyMd.copyWith(
-                      color: AppColors.secondary,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-              Text.rich(
-                TextSpan(
-                  style: AppTypography.labelMd.copyWith(
-                    color: AppColors.onSurfaceVariant,
-                    fontSize: 12,
-                  ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const TextSpan(text: 'Next: '),
-                    TextSpan(
-                      text: nextMilestone,
-                      style: const TextStyle(
-                        color: AppColors.onSurface,
-                        fontWeight: FontWeight.bold,
+                    const Icon(
+                      Icons.check_circle,
+                      size: 16,
+                      color: AppColors.secondary,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      completedMilestone,
+                      style: AppTypography.bodyMd.copyWith(
+                        color: AppColors.secondary,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                   ],
+                ),
+              ),
+              FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Text.rich(
+                  TextSpan(
+                    style: AppTypography.labelMd.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                    children: [
+                      const TextSpan(text: 'Next: '),
+                      TextSpan(
+                        text: nextMilestone,
+                        style: const TextStyle(
+                          color: AppColors.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

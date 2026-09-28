@@ -111,7 +111,8 @@ class _AiRoofAnalysisScreenState extends State<AiRoofAnalysisScreen>
       usableAreaSqFt: _state.usableAreaSqFt,
       obstacleAreaSqFt: _state.obstacleAreaSqFt,
       viabilityPercent: _state.detectedGrossAreaSqFt > 0
-          ? (_state.usableAreaSqFt / _state.detectedGrossAreaSqFt * 100).roundToDouble()
+          ? (_state.usableAreaSqFt / _state.detectedGrossAreaSqFt * 100)
+                .roundToDouble()
           : 78.0,
       obstacleCount: _state.obstacleCount,
       slopeDegrees: _state.slopeDegrees,
@@ -189,146 +190,164 @@ class _AiRoofAnalysisScreenState extends State<AiRoofAnalysisScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              // Back Button
-              InkWell(
-                onTap: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  } else {
-                    Navigator.pushReplacementNamed(context, AppRoutes.satelliteRoofDrawing);
-                  }
-                },
-                borderRadius: AppRadii.full,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: AppColors.surfaceContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    size: 18,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-
-              // Step Capsule
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 12,
-                  vertical: 6,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.secondaryContainer,
-                  borderRadius: AppRadii.full,
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x0C000000),
-                      blurRadius: 4,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const PulsingDot(size: 7, color: AppColors.secondary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Step 3 of 5',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSecondaryContainer,
-                        fontWeight: FontWeight.bold,
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // Back Button
+                  InkWell(
+                    onTap: () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.satelliteRoofDrawing,
+                        );
+                      }
+                    },
+                    borderRadius: AppRadii.full,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: const BoxDecoration(
+                        color: AppColors.surfaceContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        size: 18,
+                        color: AppColors.onSurface,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+
+                  // Step Capsule
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondaryContainer,
+                      borderRadius: AppRadii.full,
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x0C000000),
+                          blurRadius: 4,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const PulsingDot(size: 7, color: AppColors.secondary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Step 3 of 5',
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.onSecondaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    '· AI Analysis',
+                    style: AppTypography.labelMd.copyWith(
+                      color: AppColors.onSurfaceVariant,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 6),
-              Text(
-                '· AI Analysis',
-                style: AppTypography.labelMd.copyWith(
-                  color: AppColors.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
+            ),
           ),
+          const SizedBox(width: 6),
 
           // Right Controls: 0.3m Res & Fast-Forward
-          Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 5,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainer,
-                  borderRadius: AppRadii.full,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(
-                      Icons.satellite_alt,
-                      size: 15,
-                      color: AppColors.secondary,
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      '0.3m Res',
-                      style: AppTypography.labelMd.copyWith(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (!_state.isComplete) ...[
-                const SizedBox(width: 6),
-                InkWell(
-                  onTap: () => _service.fastForward(),
-                  borderRadius: AppRadii.full,
-                  child: Container(
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerRight,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
+                      horizontal: 10,
                       vertical: 5,
                     ),
                     decoration: BoxDecoration(
-                      color: AppColors.tertiaryFixed.withValues(alpha: 0.5),
+                      color: AppColors.surfaceContainer,
                       borderRadius: AppRadii.full,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         const Icon(
-                          Icons.fast_forward,
-                          size: 14,
-                          color: AppColors.tertiary,
+                          Icons.satellite_alt,
+                          size: 15,
+                          color: AppColors.secondary,
                         ),
-                        const SizedBox(width: 2),
+                        const SizedBox(width: 4),
                         Text(
-                          'Skip',
+                          '0.3m Res',
                           style: AppTypography.labelMd.copyWith(
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.tertiary,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.onSurfaceVariant,
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
-            ],
+                  if (!_state.isComplete) ...[
+                    const SizedBox(width: 6),
+                    InkWell(
+                      onTap: () => _service.fastForward(),
+                      borderRadius: AppRadii.full,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.tertiaryFixed.withValues(alpha: 0.5),
+                          borderRadius: AppRadii.full,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.fast_forward,
+                              size: 14,
+                              color: AppColors.tertiary,
+                            ),
+                            const SizedBox(width: 2),
+                            Text(
+                              'Skip',
+                              style: AppTypography.labelMd.copyWith(
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.tertiary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+            ),
           ),
         ],
       ),
@@ -415,8 +434,9 @@ class _AiRoofAnalysisScreenState extends State<AiRoofAnalysisScreen>
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color: const Color(0xFF9EF6AD)
-                                    .withValues(alpha: 0.8),
+                                color: const Color(
+                                  0xFF9EF6AD,
+                                ).withValues(alpha: 0.8),
                                 blurRadius: 10,
                                 spreadRadius: 2,
                               ),
@@ -672,14 +692,18 @@ class _AiRoofAnalysisScreenState extends State<AiRoofAnalysisScreen>
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                'AI Vision Pipeline Progress',
-                style: AppTypography.labelMd.copyWith(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.onSurfaceVariant,
+              Flexible(
+                child: Text(
+                  'AI Vision Pipeline Progress',
+                  style: AppTypography.labelMd.copyWith(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.onSurfaceVariant,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
+              const SizedBox(width: 8),
               Text(
                 '${(_state.progress * 100).toInt()}%',
                 style: AppTypography.labelMd.copyWith(

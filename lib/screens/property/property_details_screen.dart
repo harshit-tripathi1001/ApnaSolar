@@ -120,19 +120,28 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     const SizedBox(height: AppSpacing.spaceMd),
 
                     // Building Type Selector
-                    _buildSectionHeader('Building Structure', 'Defines structural load capacity'),
+                    _buildSectionHeader(
+                      'Building Structure',
+                      'Defines structural load capacity',
+                    ),
                     const SizedBox(height: AppSpacing.spaceSm),
                     _buildPropertyTypeSelector(),
                     const SizedBox(height: AppSpacing.spaceLg),
 
                     // Rooftop Structure Selector
-                    _buildSectionHeader('Rooftop Surface', 'Determines panel mounting orientation'),
+                    _buildSectionHeader(
+                      'Rooftop Surface',
+                      'Determines panel mounting orientation',
+                    ),
                     const SizedBox(height: AppSpacing.spaceSm),
                     _buildRoofTypeSelector(),
                     const SizedBox(height: AppSpacing.spaceLg),
 
                     // Average Monthly Electricity Spend
-                    _buildSectionHeader('Average Monthly Electricity Bill', 'Used to calculate net savings'),
+                    _buildSectionHeader(
+                      'Average Monthly Electricity Bill',
+                      'Used to calculate net savings',
+                    ),
                     const SizedBox(height: AppSpacing.spaceSm),
                     _buildBillSelector(),
                     const SizedBox(height: AppSpacing.spaceLg),
@@ -169,7 +178,10 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               if (Navigator.canPop(context)) {
                 Navigator.pop(context);
               } else {
-                Navigator.pushReplacementNamed(context, AppRoutes.confirmLocation);
+                Navigator.pushReplacementNamed(
+                  context,
+                  AppRoutes.confirmLocation,
+                );
               }
             },
             borderRadius: AppRadii.full,
@@ -270,7 +282,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 6,
                   children: [
                     Text(
                       'Selected Property',
@@ -280,8 +294,11 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 6),
-                    const Icon(Icons.verified, size: 14, color: AppColors.secondary),
+                    const Icon(
+                      Icons.verified,
+                      size: 14,
+                      color: AppColors.secondary,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 2),
@@ -341,16 +358,21 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: InkWell(
-            onTap: () => setState(() => _selectedPropertyType = type['title'] as String),
+            onTap: () =>
+                setState(() => _selectedPropertyType = type['title'] as String),
             borderRadius: AppRadii.cardSm,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.surfaceContainerLowest : AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
+                color: isSelected
+                    ? AppColors.surfaceContainerLowest
+                    : AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
                 borderRadius: AppRadii.cardSm,
                 border: Border.all(
-                  color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.5),
+                  color: isSelected
+                      ? AppColors.secondary
+                      : AppColors.outlineVariant.withValues(alpha: 0.5),
                   width: isSelected ? 2 : 1,
                 ),
                 boxShadow: isSelected
@@ -369,13 +391,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.secondaryContainer : AppColors.surfaceContainer,
+                      color: isSelected
+                          ? AppColors.secondaryContainer
+                          : AppColors.surfaceContainer,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       type['icon'] as IconData,
                       size: 20,
-                      color: isSelected ? AppColors.onSecondaryContainer : AppColors.onSurfaceVariant,
+                      color: isSelected
+                          ? AppColors.onSecondaryContainer
+                          : AppColors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -387,7 +413,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                           type['title'] as String,
                           style: AppTypography.labelLg.copyWith(
                             fontWeight: FontWeight.bold,
-                            color: isSelected ? AppColors.primary : AppColors.onSurface,
+                            color: isSelected
+                                ? AppColors.primary
+                                : AppColors.onSurface,
                           ),
                         ),
                         Text(
@@ -401,8 +429,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     ),
                   ),
                   Icon(
-                    isSelected ? Icons.radio_button_checked : Icons.radio_button_off,
-                    color: isSelected ? AppColors.secondary : AppColors.outlineVariant,
+                    isSelected
+                        ? Icons.radio_button_checked
+                        : Icons.radio_button_off,
+                    color: isSelected
+                        ? AppColors.secondary
+                        : AppColors.outlineVariant,
                     size: 20,
                   ),
                 ],
@@ -421,16 +453,21 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
         return Padding(
           padding: const EdgeInsets.only(bottom: 8.0),
           child: InkWell(
-            onTap: () => setState(() => _selectedRoofType = roof['title'] as String),
+            onTap: () =>
+                setState(() => _selectedRoofType = roof['title'] as String),
             borderRadius: AppRadii.cardSm,
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: isSelected ? AppColors.surfaceContainerLowest : AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
+                color: isSelected
+                    ? AppColors.surfaceContainerLowest
+                    : AppColors.surfaceContainerLowest.withValues(alpha: 0.6),
                 borderRadius: AppRadii.cardSm,
                 border: Border.all(
-                  color: isSelected ? AppColors.secondary : AppColors.outlineVariant.withValues(alpha: 0.5),
+                  color: isSelected
+                      ? AppColors.secondary
+                      : AppColors.outlineVariant.withValues(alpha: 0.5),
                   width: isSelected ? 2 : 1,
                 ),
               ),
@@ -440,13 +477,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     width: 36,
                     height: 36,
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.secondaryContainer : AppColors.surfaceContainer,
+                      color: isSelected
+                          ? AppColors.secondaryContainer
+                          : AppColors.surfaceContainer,
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Icon(
                       roof['icon'] as IconData,
                       size: 20,
-                      color: isSelected ? AppColors.onSecondaryContainer : AppColors.onSurfaceVariant,
+                      color: isSelected
+                          ? AppColors.onSecondaryContainer
+                          : AppColors.onSurfaceVariant,
                     ),
                   ),
                   const SizedBox(width: 12),
@@ -463,12 +504,16 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                               roof['title'] as String,
                               style: AppTypography.labelLg.copyWith(
                                 fontWeight: FontWeight.bold,
-                                color: isSelected ? AppColors.primary : AppColors.onSurface,
+                                color: isSelected
+                                    ? AppColors.primary
+                                    : AppColors.onSurface,
                               ),
                             ),
                             StatusBadge(
                               label: roof['tag'] as String,
-                              variant: isSelected ? StatusBadgeVariant.green : StatusBadgeVariant.neutral,
+                              variant: isSelected
+                                  ? StatusBadgeVariant.green
+                                  : StatusBadgeVariant.neutral,
                               fontSize: 9,
                             ),
                           ],
@@ -485,7 +530,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                   ),
                   Icon(
                     isSelected ? Icons.check_circle : Icons.circle_outlined,
-                    color: isSelected ? AppColors.secondary : AppColors.outlineVariant,
+                    color: isSelected
+                        ? AppColors.secondary
+                        : AppColors.outlineVariant,
                     size: 20,
                   ),
                 ],
@@ -502,12 +549,17 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 4,
             children: [
               Text(
                 'Current Monthly Spend',
-                style: AppTypography.labelMd.copyWith(color: AppColors.onSurfaceVariant),
+                style: AppTypography.labelMd.copyWith(
+                  color: AppColors.onSurfaceVariant,
+                ),
               ),
               Text(
                 '₹${_monthlyBill.toInt()}',
@@ -522,8 +574,10 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
           const SizedBox(height: 8),
 
           // Preset Chips
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            spacing: 6,
+            runSpacing: 6,
             children: _billPresets.map((preset) {
               final isPresetSelected = (_monthlyBill - preset).abs() < 50;
               return ChoiceChip(
@@ -531,8 +585,12 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                 selected: isPresetSelected,
                 selectedColor: AppColors.primaryContainer,
                 labelStyle: TextStyle(
-                  color: isPresetSelected ? AppColors.secondaryFixed : AppColors.onSurface,
-                  fontWeight: isPresetSelected ? FontWeight.bold : FontWeight.normal,
+                  color: isPresetSelected
+                      ? AppColors.secondaryFixed
+                      : AppColors.onSurface,
+                  fontWeight: isPresetSelected
+                      ? FontWeight.bold
+                      : FontWeight.normal,
                   fontSize: 12,
                 ),
                 onSelected: (selected) {
@@ -570,7 +628,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
       decoration: BoxDecoration(
         color: AppColors.surfaceContainerLowest,
         borderRadius: AppRadii.card,
-        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.4)),
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.4),
+        ),
       ),
       child: Row(
         children: [

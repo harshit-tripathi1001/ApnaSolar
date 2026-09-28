@@ -5,6 +5,7 @@ import '../../core/constants/app_radii.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../services/auth_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_card.dart';
 
@@ -24,74 +25,80 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const SizedBox(height: AppSpacing.spaceMd),
               // Top Brand Pill
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: 7,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceContainerLowest,
-                      borderRadius: AppRadii.full,
-                      boxShadow: const [
-                        BoxShadow(
-                          color: AppColors.shadowTinted,
-                          blurRadius: 10,
-                          offset: Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.wb_sunny_rounded,
-                          size: 18,
-                          color: AppColors.secondary,
-                        ),
-                        const SizedBox(width: AppSpacing.spaceXs + 2),
-                        Text(
-                          'SURYAGHAR',
-                          style: AppTypography.labelMd.copyWith(
-                            color: AppColors.primary,
-                            letterSpacing: 0.8,
-                            fontWeight: FontWeight.bold,
+              SizedBox(
+                width: double.infinity,
+                child: Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 6,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 7,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerLowest,
+                        borderRadius: AppRadii.full,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: AppColors.shadowTinted,
+                            blurRadius: 10,
+                            offset: Offset(0, 2),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.wb_sunny_rounded,
+                            size: 18,
+                            color: AppColors.secondary,
+                          ),
+                          const SizedBox(width: AppSpacing.spaceXs + 2),
+                          Text(
+                            'SURYAGHAR',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.primary,
+                              letterSpacing: 0.8,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryFixed,
-                      borderRadius: AppRadii.full,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(
-                          Icons.verified,
-                          size: 14,
-                          color: AppColors.onSecondaryFixed,
-                        ),
-                        const SizedBox(width: AppSpacing.spaceXs),
-                        Text(
-                          'PM Surya Ghar Ready',
-                          style: AppTypography.labelMd.copyWith(
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryFixed,
+                        borderRadius: AppRadii.full,
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.verified,
+                            size: 14,
                             color: AppColors.onSecondaryFixed,
-                            fontWeight: FontWeight.bold,
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: AppSpacing.spaceXs),
+                          Text(
+                            'PM Surya Ghar Ready',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.onSecondaryFixed,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: AppSpacing.spaceLg),
 
@@ -195,7 +202,7 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: AppSpacing.spaceLg),
 
               // Trust Ribbon
-              Row(
+              Wrap(
                 children: [
                   Container(
                     padding: const EdgeInsets.symmetric(
@@ -215,11 +222,13 @@ class WelcomeScreen extends StatelessWidget {
                           color: AppColors.primaryContainer,
                         ),
                         const SizedBox(width: 4),
-                        Text(
-                          '18,400+ Indian roofs illuminated',
-                          style: AppTypography.labelMd.copyWith(
-                            color: AppColors.primaryContainer,
-                            fontWeight: FontWeight.w700,
+                        Flexible(
+                          child: Text(
+                            '18,400+ Indian roofs illuminated',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.primaryContainer,
+                              fontWeight: FontWeight.w700,
+                            ),
                           ),
                         ),
                       ],
@@ -273,21 +282,20 @@ class WelcomeScreen extends StatelessWidget {
               // Primary CTA
               AppButton(
                 label: 'Get Started',
-                subtitle: 'Enter Home Dashboard',
+                subtitle: 'Check Rooftop Solar & Subsidies',
                 trailingIcon: Icons.arrow_forward_rounded,
-                onPressed: () =>
-                    Navigator.pushNamed(context, AppRoutes.home),
+                onPressed: () => _showGetStartedSheet(context),
               ),
               const SizedBox(height: AppSpacing.spaceSm),
 
-              // Secondary Sign-in / Home Link
+              // Secondary Sign-in Link
               TextButton(
-                onPressed: () =>
-                    Navigator.pushReplacementNamed(context, AppRoutes.home),
+                onPressed: () => Navigator.pushNamed(context, AppRoutes.login),
                 child: Text(
-                  'Already exploring? Go to Dashboard',
+                  'Already have an account? Sign In',
                   style: AppTypography.labelLg.copyWith(
                     color: AppColors.primary,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
@@ -368,6 +376,124 @@ class WelcomeScreen extends StatelessWidget {
                 fontSize: 10,
               ),
               textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showGetStartedSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+        decoration: const BoxDecoration(
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerHigh,
+                  borderRadius: AppRadii.full,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              'Begin Your Solar Journey',
+              style: AppTypography.headlineSm.copyWith(
+                fontWeight: FontWeight.bold,
+                color: AppColors.primary,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'Calculate rooftop potential, unlock central PM Surya Ghar subsidies, and save up to 90% on electricity.',
+              style: AppTypography.bodyMd.copyWith(
+                color: AppColors.onSurfaceVariant,
+                fontSize: 13,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // Option 1: Create Account (Primary)
+            AppButton(
+              label: 'Create Account',
+              subtitle: 'New to ApnaSolar? Start here',
+              trailingIcon: Icons.arrow_forward_rounded,
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.pushNamed(context, AppRoutes.register);
+              },
+            ),
+            const SizedBox(height: 12),
+
+            // Option 2: Sign In (Secondary)
+            OutlinedButton(
+              onPressed: () {
+                Navigator.pop(ctx);
+                Navigator.pushNamed(context, AppRoutes.login);
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                side: const BorderSide(color: AppColors.primary, width: 1.5),
+                shape: RoundedRectangleBorder(borderRadius: AppRadii.full),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.login_rounded,
+                    size: 18,
+                    color: AppColors.primary,
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    'Sign In with Existing Account',
+                    style: AppTypography.labelLg.copyWith(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            // Option 3: Explore as Guest
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                try {
+                  await AuthService().signInAnonymously();
+                } catch (e) {
+                  debugPrint('Anonymous sign-in note: $e');
+                }
+                if (context.mounted) {
+                  Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.confirmLocation,
+                    (route) => false,
+                  );
+                }
+              },
+              child: Text(
+                'Explore as Guest (Instant Access)',
+                style: AppTypography.labelMd.copyWith(
+                  color: AppColors.secondary,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
             ),
           ],
         ),

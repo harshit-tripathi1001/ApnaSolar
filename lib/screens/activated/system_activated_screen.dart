@@ -18,7 +18,8 @@ class SystemActivatedScreen extends StatelessWidget {
       title: 'Solar System Activated 🎉',
       stitchScreenId: '64eae02560c14086bb0909c1328c4e4d',
       propertyAddress: session.selectedProperty.formattedAddress,
-      description: 'Live generation active: Generating ~$daily kWh today.\nBESCOM net meter spinning backward! ₹$subsidy DBT subsidy credited directly to your bank account.',
+      description:
+          'Live generation active: Generating ~$daily kWh today.\nBESCOM net meter spinning backward! ₹$subsidy DBT subsidy credited directly to your bank account.',
       icon: Icons.electric_bolt_rounded,
       nextRoute: AppRoutes.home,
       nextLabel: 'Return to Home Dashboard',

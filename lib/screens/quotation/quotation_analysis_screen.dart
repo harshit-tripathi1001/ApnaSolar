@@ -21,7 +21,8 @@ class QuotationAnalysisScreen extends StatelessWidget {
       title: 'Quotation & Financial Analysis',
       stitchScreenId: '938220953c87442f89dd5f589734e6c6',
       propertyAddress: address,
-      description: 'Official Turnkey Quotation for $capacity kW System.\nTotal Cost: ₹$gross | DBT Subsidy: ₹$subsidy | Net Customer Payable: ₹$net.\nIncludes DISCOM bidirectional meter swap, 25-yr warranties, and structure mounting.',
+      description:
+          'Official Turnkey Quotation for $capacity kW System.\nTotal Cost: ₹$gross | DBT Subsidy: ₹$subsidy | Net Customer Payable: ₹$net.\nIncludes DISCOM bidirectional meter swap, 25-yr warranties, and structure mounting.',
       icon: Icons.request_quote_rounded,
       nextRoute: AppRoutes.nearbyInstallers,
       nextLabel: 'Connect with Verified Installers',

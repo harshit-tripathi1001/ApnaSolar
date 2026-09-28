@@ -87,7 +87,9 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
   Future<void> _handleProceed() async {
     setState(() => _isAnalyzing = true);
     final isDefault = (_polygonRatio - 1.0).abs() < 0.02;
-    final usable = isDefault ? 1120.0 : (1120.0 * _polygonRatio).roundToDouble();
+    final usable = isDefault
+        ? 1120.0
+        : (1120.0 * _polygonRatio).roundToDouble();
     final gross = isDefault ? 1440.0 : (1440.0 * _polygonRatio).roundToDouble();
 
     SolarSessionState().updateRooftopAnalysis(
@@ -1036,15 +1038,16 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
             borderRadius: AppRadii.full,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 6),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 6,
                 children: [
                   const Icon(
                     Icons.photo_camera,
                     size: 16,
                     color: AppColors.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 6),
                   Text(
                     'Switch to Camera Photo instead',
                     style: AppTypography.labelMd.copyWith(

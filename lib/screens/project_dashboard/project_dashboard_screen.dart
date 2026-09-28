@@ -21,7 +21,8 @@ class ProjectDashboardScreen extends StatelessWidget {
         title: 'Project Tracker',
         stitchScreenId: '7f53150992bc4caf908408ffe0795067',
         propertyAddress: session.selectedProperty.formattedAddress,
-        description: 'Live milestone tracking for your $capacity kW rooftop project: Feasibility Approved → Delivery In Transit → Installation Scheduled → Net-Meter Applied.',
+        description:
+            'Live milestone tracking for your $capacity kW rooftop project: Feasibility Approved → Delivery In Transit → Installation Scheduled → Net-Meter Applied.',
         icon: Icons.checklist_rounded,
         nextRoute: AppRoutes.installationTimeline,
         nextLabel: 'View Detailed 5-Stage Timeline',

@@ -30,14 +30,17 @@ class RoofResultScreen extends StatelessWidget {
 
   bool get _isDefaultMock =>
       usableAreaSqFt == 1120.0 &&
-      (SolarSessionState().rooftopAnalysis.netUsableAreaSqFt - 1120.0).abs() < 1.0 &&
+      (SolarSessionState().rooftopAnalysis.netUsableAreaSqFt - 1120.0).abs() <
+          1.0 &&
       (SolarSessionState().monthlyBill - 3850.0).abs() < 1.0;
 
-  double get _effectiveUsableArea =>
-      _isDefaultMock ? usableAreaSqFt : SolarSessionState().rooftopAnalysis.netUsableAreaSqFt;
+  double get _effectiveUsableArea => _isDefaultMock
+      ? usableAreaSqFt
+      : SolarSessionState().rooftopAnalysis.netUsableAreaSqFt;
 
-  double get _effectiveTotalArea =>
-      _isDefaultMock ? totalAreaSqFt : SolarSessionState().rooftopAnalysis.totalGrossAreaSqFt;
+  double get _effectiveTotalArea => _isDefaultMock
+      ? totalAreaSqFt
+      : SolarSessionState().rooftopAnalysis.totalGrossAreaSqFt;
 
   double get _effectiveCapacity =>
       _isDefaultMock ? capacityKw : SolarSessionState().selectedCapacityKw;
@@ -47,11 +50,13 @@ class RoofResultScreen extends StatelessWidget {
     return SolarSessionState().solarEstimate.panelCount;
   }
 
-  double get _effectiveMonthlySavings =>
-      _isDefaultMock ? monthlySavings : SolarSessionState().financialBreakdown.monthlySavings;
+  double get _effectiveMonthlySavings => _isDefaultMock
+      ? monthlySavings
+      : SolarSessionState().financialBreakdown.monthlySavings;
 
-  int get _effectiveTreeOffset =>
-      _isDefaultMock ? treeOffset : SolarSessionState().solarEstimate.treeOffsetEquivalent;
+  int get _effectiveTreeOffset => _isDefaultMock
+      ? treeOffset
+      : SolarSessionState().solarEstimate.treeOffsetEquivalent;
 
   String _formatNumber(num number) {
     return number.toInt().toString().replaceAllMapped(
@@ -125,61 +130,72 @@ class RoofResultScreen extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () {
-                      if (Navigator.canPop(context)) {
-                        Navigator.pop(context);
-                      } else {
-                        Navigator.pushReplacementNamed(context, AppRoutes.aiRoofAnalysis);
-                      }
-                    },
-                    borderRadius: AppRadii.full,
-                    child: Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(
-                        color: AppColors.surfaceContainer,
-                        shape: BoxShape.circle,
+              Flexible(
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      InkWell(
+                        onTap: () {
+                          if (Navigator.canPop(context)) {
+                            Navigator.pop(context);
+                          } else {
+                            Navigator.pushReplacementNamed(
+                              context,
+                              AppRoutes.aiRoofAnalysis,
+                            );
+                          }
+                        },
+                        borderRadius: AppRadii.full,
+                        child: Container(
+                          width: 36,
+                          height: 36,
+                          decoration: const BoxDecoration(
+                            color: AppColors.surfaceContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.arrow_back,
+                            size: 18,
+                            color: AppColors.onSurface,
+                          ),
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 18,
-                        color: AppColors.onSurface,
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.verified_rounded,
+                        size: 16,
+                        color: AppColors.secondary,
                       ),
-                    ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Step 3 of 5',
+                        style: AppTypography.labelMd.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.primary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      const Text(
+                        '•',
+                        style: TextStyle(color: AppColors.outlineVariant),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Roof Assessment',
+                        style: AppTypography.labelMd.copyWith(
+                          color: AppColors.onSurfaceVariant,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(width: 8),
-                  const Icon(
-                    Icons.verified_rounded,
-                    size: 16,
-                    color: AppColors.secondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Step 3 of 5',
-                    style: AppTypography.labelMd.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Text(
-                    '•',
-                    style: TextStyle(color: AppColors.outlineVariant),
-                  ),
-                  const SizedBox(width: 4),
-                  Text(
-                    'Roof Assessment',
-                    style: AppTypography.labelMd.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -428,47 +444,58 @@ class RoofResultScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 28,
-                                height: 28,
-                                decoration: const BoxDecoration(
-                                  color: AppColors.secondaryContainer,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: const Icon(
-                                  Icons.satellite_alt,
-                                  size: 16,
-                                  color: AppColors.onSecondaryContainer,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    SolarSessionState().selectedProperty.locality == 'Indiranagar'
-                                        ? 'Plot #42, Indiranagar'
-                                        : 'Plot in ${SolarSessionState().selectedProperty.locality}',
-                                    style: AppTypography.labelMd.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary,
-                                      fontSize: 12,
-                                    ),
+                          Expanded(
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 28,
+                                  height: 28,
+                                  decoration: const BoxDecoration(
+                                    color: AppColors.secondaryContainer,
+                                    shape: BoxShape.circle,
                                   ),
-                                  Text(
-                                    'High Accuracy Satellite Scan',
-                                    style: AppTypography.bodyMd.copyWith(
-                                      fontSize: 10,
-                                      color: AppColors.onSurfaceVariant,
-                                    ),
+                                  child: const Icon(
+                                    Icons.satellite_alt,
+                                    size: 16,
+                                    color: AppColors.onSecondaryContainer,
                                   ),
-                                ],
-                              ),
-                            ],
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        SolarSessionState()
+                                                    .selectedProperty
+                                                    .locality ==
+                                                'Indiranagar'
+                                            ? 'Plot #42, Indiranagar'
+                                            : 'Plot in ${SolarSessionState().selectedProperty.locality}',
+                                        style: AppTypography.labelMd.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primary,
+                                          fontSize: 12,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'High Accuracy Satellite Scan',
+                                        style: AppTypography.bodyMd.copyWith(
+                                          fontSize: 10,
+                                          color: AppColors.onSurfaceVariant,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
+                          const SizedBox(width: 8),
                           InkWell(
                             onTap: () => Navigator.pushNamed(
                               context,
@@ -537,8 +564,11 @@ class RoofResultScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 4,
               children: [
                 Text(
                   'USABLE SOLAR TERRACE AREA',
@@ -583,28 +613,32 @@ class RoofResultScreen extends StatelessWidget {
             const SizedBox(height: 6),
 
             // Huge Metric Value
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.baseline,
-              textBaseline: TextBaseline.alphabetic,
-              children: [
-                Text(
-                  _formatNumber(_effectiveUsableArea),
-                  style: AppTypography.statCounter.copyWith(
-                    fontSize: 44,
-                    fontWeight: FontWeight.w800,
-                    color: AppColors.primary,
-                    letterSpacing: -1.0,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.baseline,
+                textBaseline: TextBaseline.alphabetic,
+                children: [
+                  Text(
+                    _formatNumber(_effectiveUsableArea),
+                    style: AppTypography.statCounter.copyWith(
+                      fontSize: 44,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.primary,
+                      letterSpacing: -1.0,
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  'sq. ft',
-                  style: AppTypography.headlineSm.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.onSurfaceVariant,
+                  const SizedBox(width: 8),
+                  Text(
+                    'sq. ft',
+                    style: AppTypography.headlineSm.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.onSurfaceVariant,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             const SizedBox(height: 4),
             Text(
@@ -838,12 +872,15 @@ class RoofResultScreen extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: AppColors.secondary),
               const SizedBox(width: 4),
-              Text(
-                label,
-                style: AppTypography.labelMd.copyWith(
-                  fontSize: 11,
-                  color: AppColors.onSurfaceVariant,
-                  fontWeight: FontWeight.w600,
+              Expanded(
+                child: Text(
+                  label,
+                  style: AppTypography.labelMd.copyWith(
+                    fontSize: 11,
+                    color: AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
             ],
@@ -894,15 +931,16 @@ class RoofResultScreen extends StatelessWidget {
             borderRadius: AppRadii.full,
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              child: Wrap(
+                alignment: WrapAlignment.center,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 6,
                 children: [
                   const Icon(
                     Icons.edit_road,
                     size: 16,
                     color: AppColors.onSurfaceVariant,
                   ),
-                  const SizedBox(width: 6),
                   Text(
                     'Adjust Roof Boundary Manually',
                     style: AppTypography.labelMd.copyWith(

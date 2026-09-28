@@ -3,19 +3,16 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:apnasolar/app/apnasolar_app.dart';
 import 'package:apnasolar/app/routes.dart';
-import 'package:apnasolar/screens/activated/system_activated_screen.dart';
 import 'package:apnasolar/screens/analysis/ai_roof_analysis_screen.dart';
 import 'package:apnasolar/screens/cost_breakdown/cost_breakdown_screen.dart';
 import 'package:apnasolar/screens/home/home_screen.dart';
-import 'package:apnasolar/screens/installers/nearby_installers_screen.dart';
 import 'package:apnasolar/screens/location/confirm_location_screen.dart';
 import 'package:apnasolar/screens/property/property_details_screen.dart';
 import 'package:apnasolar/screens/recommendation/solar_recommendation_screen.dart';
 import 'package:apnasolar/screens/roof_drawing/satellite_roof_drawing_screen.dart';
 import 'package:apnasolar/screens/roof_result/roof_result_screen.dart';
+import 'package:apnasolar/screens/solar_report/solar_report_screen.dart';
 import 'package:apnasolar/screens/splash/splash_screen.dart';
-import 'package:apnasolar/screens/subsidy_payback/subsidy_payback_screen.dart';
-import 'package:apnasolar/screens/timeline/installation_timeline_screen.dart';
 import 'package:apnasolar/screens/welcome/welcome_screen.dart';
 import 'package:apnasolar/services/solar_session_service.dart';
 
@@ -50,22 +47,21 @@ void main() {
         expect(find.text('SURYAGHAR'), findsOneWidget);
         expect(find.text('Get Started'), findsOneWidget);
 
-        // Tap "Get Started" to advance to Home
+        // Tap "Get Started" to open auth / onboarding bottom sheet
         await tester.tap(find.text('Get Started'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 3. Home Dashboard: HomeScreen
-        expect(find.byType(HomeScreen), findsOneWidget);
-        expect(find.text('Indiranagar, Bengaluru'), findsOneWidget);
-        expect(find.text('Check My Solar Potential'), findsOneWidget);
+        // Verify bottom sheet options: Create Account, Sign In, and Explore as Guest
+        expect(find.text('Create Account'), findsOneWidget);
+        expect(find.textContaining('Explore as Guest'), findsOneWidget);
 
-        // Tap "Check My Solar Potential" to enter Location confirmation
-        await tester.tap(find.text('Check My Solar Potential'));
+        // Tap "Explore as Guest" to initiate the direct step-by-step solar assessment
+        await tester.tap(find.textContaining('Explore as Guest'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 4. Location: ConfirmLocationScreen (Step 1 of 5)
+        // 3. Location: ConfirmLocationScreen (Step 1 of 5)
         expect(find.byType(ConfirmLocationScreen), findsOneWidget);
         expect(find.text('Step 1 of 5 · Location'), findsOneWidget);
         expect(find.text('Confirm Location'), findsOneWidget);
@@ -76,7 +72,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 5. Property: PropertyDetailsScreen (Step 2 of 5)
+        // 4. Property: PropertyDetailsScreen (Step 2 of 5)
         expect(find.byType(PropertyDetailsScreen), findsOneWidget);
         expect(find.text('Step 2 of 5 · Property'), findsOneWidget);
         expect(find.text('Building Structure'), findsOneWidget);
@@ -88,7 +84,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 6. Rooftop: SatelliteRoofDrawingScreen (Step 3 of 5)
+        // 5. Rooftop: SatelliteRoofDrawingScreen (Step 3 of 5)
         expect(find.byType(SatelliteRoofDrawingScreen), findsOneWidget);
         expect(find.text('Step 3 of 5 · Roof Boundary'), findsOneWidget);
         expect(find.text('Use This Roof Boundary'), findsOneWidget);
@@ -99,7 +95,7 @@ void main() {
         await tester.pump(const Duration(milliseconds: 500));
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 7. Analysis: AiRoofAnalysisScreen (Step 3 of 5 · AI Analysis)
+        // 6. Analysis: AiRoofAnalysisScreen (Step 3 of 5 · AI Analysis)
         expect(find.byType(AiRoofAnalysisScreen), findsOneWidget);
         expect(find.text('· AI Analysis'), findsOneWidget);
 
@@ -117,7 +113,7 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        // 8. Results: RoofResultScreen (Step 3 of 5 · Roof Assessment)
+        // 7. Results: RoofResultScreen (Step 3 of 5 · Roof Assessment)
         expect(find.byType(RoofResultScreen), findsOneWidget);
         expect(find.text('Roof Assessment'), findsOneWidget);
         expect(find.text('1,120'), findsOneWidget);
@@ -131,12 +127,15 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 800));
 
-        // SolarRecommendationScreen
+        // 8. SolarRecommendationScreen
         expect(find.byType(SolarRecommendationScreen), findsOneWidget);
         expect(find.text('5.8 kW System Capacity'), findsOneWidget);
-        expect(find.textContaining('78,000'), findsWidgets); // PM Surya Ghar subsidy
+        expect(
+          find.textContaining('78,000'),
+          findsWidgets,
+        ); // PM Surya Ghar subsidy
 
-        // 9. Insights: Cost Breakdown
+        // 9. Cost Breakdown
         final breakdownFinder = find.text('View Equipment & Cost Details');
         expect(breakdownFinder, findsOneWidget);
         await tester.ensureVisible(breakdownFinder);
@@ -147,54 +146,31 @@ void main() {
         expect(find.byType(CostBreakdownScreen), findsOneWidget);
         expect(find.text('Simple, Honest Pricing'), findsWidgets);
 
-        // Proceed to Subsidy Payback
-        final subsidyFinder = find.text('See Subsidy & Payback Period');
-        expect(subsidyFinder, findsOneWidget);
-        await tester.tap(subsidyFinder);
+        // Tap "Generate Official Audit Report (PDF)"
+        final reportBtnFinder = find.text(
+          'Generate Official Audit Report (PDF)',
+        );
+        expect(reportBtnFinder, findsOneWidget);
+        await tester.ensureVisible(reportBtnFinder);
+        await tester.tap(reportBtnFinder);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.byType(SubsidyPaybackScreen), findsOneWidget);
-        expect(find.text('Subsidy & Payback Timeline'), findsWidgets);
+        // 10. Official Solar Audit Report Screen with PDF Download
+        expect(find.byType(SolarReportScreen), findsOneWidget);
+        expect(find.text('Official Solar Audit Report'), findsOneWidget);
+        expect(find.text('Download as PDF Report'), findsOneWidget);
+        expect(find.text('Complete & Open Home Dashboard'), findsOneWidget);
 
-        // 10. Summary / Next Action: Connect with Installers & Activate
-        final installersFinder = find.text('Explore Certified Installers');
-        expect(installersFinder, findsOneWidget);
-        await tester.tap(installersFinder);
+        // 11. Complete Flow & Open Home Dashboard
+        final homeBtnFinder = find.text('Complete & Open Home Dashboard');
+        await tester.ensureVisible(homeBtnFinder);
+        await tester.tap(homeBtnFinder);
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        expect(find.byType(NearbyInstallersScreen), findsOneWidget);
-        expect(find.text('Nearby Verified Installers'), findsWidgets);
-
-        // Proceed to Compare Vendors
-        await tester.tap(find.text('Compare Vendor Quotes').first);
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-
-        // Proceed to Vendor Profile
-        await tester.tap(find.text('Inspect Selected Vendor Profile'));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-
-        // Proceed to Installation Timeline
-        await tester.tap(find.text('Accept Quote & View Timeline'));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-        expect(find.byType(InstallationTimelineScreen), findsOneWidget);
-
-        // Complete installation and reach System Activated screen
-        await tester.tap(find.text('Simulate System Activation'));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
-        expect(find.byType(SystemActivatedScreen), findsOneWidget);
-        expect(find.textContaining('Solar System Activated'), findsWidgets);
-
-        // Return to Home Dashboard
-        await tester.tap(find.text('Return to Home Dashboard'));
-        await tester.pump();
-        await tester.pump(const Duration(milliseconds: 500));
         expect(find.byType(HomeScreen), findsOneWidget);
+        expect(find.text('Indiranagar, Bengaluru'), findsOneWidget);
       },
     );
 

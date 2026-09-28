@@ -12,7 +12,8 @@ class HowItWorksScreen extends StatelessWidget {
     return BasePlaceholderScreen(
       title: 'How ApnaSolar Works',
       stitchScreenId: '17832eea8c204ea5b3a0f81b3d06bb52',
-      description: '3-step onboarding walkthrough explaining satellite solar detection, PM Surya Ghar central subsidy entitlement, and verified installer bidding.',
+      description:
+          '3-step onboarding walkthrough explaining satellite solar detection, PM Surya Ghar central subsidy entitlement, and verified installer bidding.',
       icon: Icons.lightbulb_outline_rounded,
       nextRoute: AppRoutes.confirmLocation,
       nextLabel: 'Start Roof Assessment',

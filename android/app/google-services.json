@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "826262863047",
+    "project_id": "apnasolar-ace80",
+    "storage_bucket": "apnasolar-ace80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:826262863047:android:17bec3e9b7442e251f12e2",
+        "android_client_info": {
+          "package_name": "com.apnasolar.apnasolar"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6g0Tn5z-0Q4zS040JLelOWYNZQmA4Uok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

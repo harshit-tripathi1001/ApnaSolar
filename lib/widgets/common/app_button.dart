@@ -90,36 +90,44 @@ class AppButton extends StatelessWidget {
       content = Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (leadingIcon != null && !isLoading) ...[
-                Icon(
-                  leadingIcon,
-                  size: 20,
-                  color: leadingIconColor ?? AppColors.tertiaryFixed,
-                ),
-                const SizedBox(width: AppSpacing.spaceSm),
+          Expanded(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (leadingIcon != null && !isLoading) ...[
+                  Icon(
+                    leadingIcon,
+                    size: 20,
+                    color: leadingIconColor ?? AppColors.tertiaryFixed,
+                  ),
+                  const SizedBox(width: AppSpacing.spaceSm),
+                ],
+                if (isLoading)
+                  SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2.2,
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        foregroundColor,
+                      ),
+                    ),
+                  )
+                else
+                  Flexible(
+                    child: Text(
+                      label,
+                      style: AppTypography.labelLg.copyWith(
+                        color: foregroundColor,
+                        letterSpacing: 0.1,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
               ],
-              if (isLoading)
-                SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.2,
-                    valueColor: AlwaysStoppedAnimation<Color>(foregroundColor),
-                  ),
-                )
-              else
-                Text(
-                  label,
-                  style: AppTypography.labelLg.copyWith(
-                    color: foregroundColor,
-                    letterSpacing: 0.1,
-                  ),
-                ),
-            ],
+            ),
           ),
+          const SizedBox(width: 8),
           Container(
             width: 32,
             height: 32,

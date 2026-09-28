@@ -115,75 +115,87 @@ class AppShell extends StatelessWidget {
                         ],
                       )
                     else
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          // 40x40 Primary container circle with solar power icon
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: const BoxDecoration(
-                              color: AppColors.primaryContainer,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.solar_power_rounded,
-                                size: 22,
-                                color: AppColors.secondaryFixed,
+                      Expanded(
+                        child: Row(
+                          children: [
+                            // 40x40 Primary container circle with solar power icon
+                            Container(
+                              width: 40,
+                              height: 40,
+                              decoration: const BoxDecoration(
+                                color: AppColors.primaryContainer,
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.solar_power_rounded,
+                                  size: 22,
+                                  color: AppColors.secondaryFixed,
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(width: AppSpacing.spaceSm),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
+                            const SizedBox(width: AppSpacing.spaceSm),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    'ApnaSolar',
-                                    style: AppTypography.headlineSm.copyWith(
-                                      color: AppColors.primary,
-                                      fontWeight: FontWeight.bold,
-                                      letterSpacing: -0.2,
-                                    ),
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Flexible(
+                                        child: Text(
+                                          'ApnaSolar',
+                                          style: AppTypography.headlineSm
+                                              .copyWith(
+                                                color: AppColors.primary,
+                                                fontWeight: FontWeight.bold,
+                                                letterSpacing: -0.2,
+                                              ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      const Icon(
+                                        Icons.verified,
+                                        size: 16,
+                                        color: AppColors.secondary,
+                                      ),
+                                    ],
                                   ),
-                                  const SizedBox(width: 4),
-                                  const Icon(
-                                    Icons.verified,
-                                    size: 16,
-                                    color: AppColors.secondary,
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on,
+                                        size: 13,
+                                        color: AppColors.onSurfaceVariant,
+                                      ),
+                                      const SizedBox(width: 2),
+                                      Flexible(
+                                        child: Text(
+                                          '${SolarSessionState().selectedProperty.city}, ${SolarSessionState().selectedProperty.state == "Karnataka" ? "KA" : SolarSessionState().selectedProperty.state}',
+                                          style: AppTypography.labelMd.copyWith(
+                                            color: AppColors.onSurfaceVariant,
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      const Icon(
+                                        Icons.expand_more,
+                                        size: 14,
+                                        color: AppColors.onSurfaceVariant,
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    size: 13,
-                                    color: AppColors.onSurfaceVariant,
-                                  ),
-                                  const SizedBox(width: 2),
-                                  Text(
-                                    '${SolarSessionState().selectedProperty.city}, ${SolarSessionState().selectedProperty.state == "Karnataka" ? "KA" : SolarSessionState().selectedProperty.state}',
-                                    style: AppTypography.labelMd.copyWith(
-                                      color: AppColors.onSurfaceVariant,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  const Icon(
-                                    Icons.expand_more,
-                                    size: 14,
-                                    color: AppColors.onSurfaceVariant,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ],
+                            ),
+                          ],
+                        ),
                       ),
+                    const SizedBox(width: 8),
 
                     // Right: Actions (Notifications + User profile avatar)
                     if (actions != null)
@@ -282,59 +294,64 @@ class AppShell extends StatelessWidget {
                   final isSelected = index == currentIndex;
                   final item = navItems[index];
 
-                  return InkWell(
-                    onTap: () => _onNavTap(context, index),
-                    borderRadius: AppRadii.full,
-                    splashColor: AppColors.secondaryFixed.withValues(
-                      alpha: 0.2,
-                    ),
-                    highlightColor: Colors.transparent,
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 220),
-                      curve: Curves.easeOutCubic,
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isSelected ? 14 : 10,
-                        vertical: 8,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primaryContainer
-                            : Colors.transparent,
+                  return Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: InkWell(
+                        onTap: () => _onNavTap(context, index),
                         borderRadius: AppRadii.full,
-                        boxShadow: isSelected
-                            ? const [
-                                BoxShadow(
-                                  color: Color(0x33164A38),
-                                  blurRadius: 16,
-                                  offset: Offset(0, 8),
-                                ),
-                              ]
-                            : null,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            item.icon,
-                            size: 20,
+                        splashColor: AppColors.secondaryFixed.withValues(
+                          alpha: 0.2,
+                        ),
+                        highlightColor: Colors.transparent,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeOutCubic,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isSelected ? 12 : 8,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
                             color: isSelected
-                                ? AppColors.secondaryFixed
-                                : AppColors.onSurfaceVariant,
+                                ? AppColors.primaryContainer
+                                : Colors.transparent,
+                            borderRadius: AppRadii.full,
+                            boxShadow: isSelected
+                                ? const [
+                                    BoxShadow(
+                                      color: Color(0x33164A38),
+                                      blurRadius: 16,
+                                      offset: Offset(0, 8),
+                                    ),
+                                  ]
+                                : null,
                           ),
-                          const SizedBox(width: 5),
-                          Text(
-                            item.label,
-                            style: AppTypography.labelMd.copyWith(
-                              color: isSelected
-                                  ? AppColors.secondaryFixed
-                                  : AppColors.onSurfaceVariant,
-                              fontWeight: isSelected
-                                  ? FontWeight.w700
-                                  : FontWeight.w600,
-                              letterSpacing: -0.2,
-                            ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                item.icon,
+                                size: 20,
+                                color: isSelected
+                                    ? AppColors.secondaryFixed
+                                    : AppColors.onSurfaceVariant,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                item.label,
+                                style: AppTypography.labelMd.copyWith(
+                                  color: isSelected
+                                      ? AppColors.secondaryFixed
+                                      : AppColors.onSurfaceVariant,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w700
+                                      : FontWeight.w600,
+                                  letterSpacing: -0.2,
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   );

@@ -98,8 +98,10 @@ class MockRooftopAnalysisService implements RooftopAnalysisService {
     double? defaultUsableArea,
   }) {
     final session = SolarSessionState();
-    final gross = defaultGrossArea ?? session.rooftopAnalysis.totalGrossAreaSqFt;
-    final usable = defaultUsableArea ?? session.rooftopAnalysis.netUsableAreaSqFt;
+    final gross =
+        defaultGrossArea ?? session.rooftopAnalysis.totalGrossAreaSqFt;
+    final usable =
+        defaultUsableArea ?? session.rooftopAnalysis.netUsableAreaSqFt;
 
     _currentState = _createState(
       phase: AnalysisPhase.input,
@@ -134,17 +136,20 @@ class MockRooftopAnalysisService implements RooftopAnalysisService {
       case AnalysisPhase.analysing:
         progress = 0.30;
         title = 'Mapping your sun exposure...';
-        desc = 'Synthesizing ISRO INSAT solar irradiance data with AI terrace segmentation.';
+        desc =
+            'Synthesizing ISRO INSAT solar irradiance data with AI terrace segmentation.';
         break;
       case AnalysisPhase.rooftopDetected:
         progress = 0.55;
         title = 'Terrace Boundary Detected';
-        desc = 'Identified reinforced parapet buffers and peripheral dimensions.';
+        desc =
+            'Identified reinforced parapet buffers and peripheral dimensions.';
         break;
       case AnalysisPhase.areaEstimated:
         progress = 0.75;
         title = 'Shadow Obstacles Isolated';
-        desc = 'Excluded Mumty stair tower and overhead Sintex water tank shadows.';
+        desc =
+            'Excluded Mumty stair tower and overhead Sintex water tank shadows.';
         break;
       case AnalysisPhase.solarPotentialCalculated:
         progress = 0.90;
@@ -154,7 +159,8 @@ class MockRooftopAnalysisService implements RooftopAnalysisService {
       case AnalysisPhase.resultReady:
         progress = 1.0;
         title = 'Solar Assessment Complete!';
-        desc = 'High-precision terrace model and generation forecast ready to view.';
+        desc =
+            'High-precision terrace model and generation forecast ready to view.';
         break;
     }
 
@@ -163,7 +169,9 @@ class MockRooftopAnalysisService implements RooftopAnalysisService {
         totalGrossAreaSqFt: grossArea,
         netUsableAreaSqFt: usableArea,
         obstacleAreaSqFt: (grossArea - usableArea).clamp(0.0, double.infinity),
-        solarViabilityPercent: grossArea > 0 ? (usableArea / grossArea * 100).roundToDouble() : 78.0,
+        solarViabilityPercent: grossArea > 0
+            ? (usableArea / grossArea * 100).roundToDouble()
+            : 78.0,
         obstacleCount: 2,
       ),
     );
@@ -196,8 +204,10 @@ class MockRooftopAnalysisService implements RooftopAnalysisService {
   }) {
     final completer = Completer<void>();
     final session = SolarSessionState();
-    final gross = initialGrossArea ?? session.rooftopAnalysis.totalGrossAreaSqFt;
-    final usable = initialUsableArea ?? session.rooftopAnalysis.netUsableAreaSqFt;
+    final gross =
+        initialGrossArea ?? session.rooftopAnalysis.totalGrossAreaSqFt;
+    final usable =
+        initialUsableArea ?? session.rooftopAnalysis.netUsableAreaSqFt;
     _isFastForwarded = false;
 
     _stepTimer?.cancel();

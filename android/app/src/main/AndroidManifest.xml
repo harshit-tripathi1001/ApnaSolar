@@ -1,6 +1,16 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Internet access for Firebase Auth / Firestore / Storage -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Camera for rooftop photo capture -->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!-- Photo library access (Android 13+) -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+    <!-- Photo library access (Android < 13) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32"/>
+
     <application
-        android:label="apnasolar"
+        android:label="ApnaSolar"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

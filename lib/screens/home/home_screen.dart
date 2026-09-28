@@ -229,6 +229,10 @@ class _HomeScreenState extends State<HomeScreen>
                 _buildPmSuryaGharBanner(context),
                 const SizedBox(height: AppSpacing.spaceLg),
 
+                // Official Solar Feasibility Audit Report & PDF Card
+                _buildOfficialReportCard(context),
+                const SizedBox(height: AppSpacing.spaceLg),
+
                 // Neighborhood Environmental & Lifetime Gains
                 _buildNeighborhoodImpact(),
                 const SizedBox(height: AppSpacing.spaceLg),
@@ -244,48 +248,46 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildTopHeaderPills() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Wrap(
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: 8,
+      runSpacing: 4,
       children: [
         // Indiranagar, Bengaluru Location Pill
-        Flexible(
-          child: InkWell(
-            borderRadius: AppRadii.full,
-            onTap: () => Navigator.pushNamed(context, AppRoutes.confirmLocation),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-              decoration: BoxDecoration(
-                color: AppColors.surfaceContainer,
-                borderRadius: AppRadii.full,
-                boxShadow: const [
-                  BoxShadow(
-                    color: Color(0x0A164A38),
-                    blurRadius: 4,
-                    offset: Offset(0, 1),
+        InkWell(
+          borderRadius: AppRadii.full,
+          onTap: () => Navigator.pushNamed(context, AppRoutes.confirmLocation),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceContainer,
+              borderRadius: AppRadii.full,
+              boxShadow: const [
+                BoxShadow(
+                  color: Color(0x0A164A38),
+                  blurRadius: 4,
+                  offset: Offset(0, 1),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.location_on,
+                  size: 15,
+                  color: AppColors.secondary,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${SolarSessionState().selectedProperty.locality}, ${SolarSessionState().selectedProperty.city}',
+                  style: AppTypography.labelMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.location_on,
-                    size: 15,
-                    color: AppColors.secondary,
-                  ),
-                  const SizedBox(width: 4),
-                  Flexible(
-                    child: Text(
-                      '${SolarSessionState().selectedProperty.locality}, ${SolarSessionState().selectedProperty.city}',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
@@ -324,7 +326,9 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        Wrap(
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 6,
           children: [
             Text(
               'Good morning, Ramesh',
@@ -334,7 +338,6 @@ class _HomeScreenState extends State<HomeScreen>
                 letterSpacing: -0.5,
               ),
             ),
-            const SizedBox(width: 6),
             const Text('👋', style: TextStyle(fontSize: 24)),
           ],
         ),
@@ -425,8 +428,11 @@ class _HomeScreenState extends State<HomeScreen>
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                Wrap(
+                  alignment: WrapAlignment.spaceBetween,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  runSpacing: 4,
                   children: [
                     Text(
                       'ESTIMATED MONTHLY VALUE',
@@ -448,9 +454,9 @@ class _HomeScreenState extends State<HomeScreen>
                 const SizedBox(height: 8),
 
                 // Big Monthly Value
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.baseline,
-                  textBaseline: TextBaseline.alphabetic,
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 4,
                   children: [
                     Text(
                       'Your roof saves ',
@@ -494,7 +500,8 @@ class _HomeScreenState extends State<HomeScreen>
                         ),
                       ),
                       TextSpan(
-                        text: ' in BESCOM electricity power bills with standard PM Surya Ghar subsidy.',
+                        text:
+                            ' in BESCOM electricity power bills with standard PM Surya Ghar subsidy.',
                       ),
                     ],
                   ),
@@ -554,8 +561,10 @@ class _HomeScreenState extends State<HomeScreen>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        Wrap(
+          alignment: WrapAlignment.spaceBetween,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          spacing: 8,
           children: [
             Text(
               'Quick Actions',
@@ -658,7 +667,9 @@ class _HomeScreenState extends State<HomeScreen>
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Row(
+                    Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 4,
                       children: [
                         Text(
                           'PM Surya Ghar Yojana',
@@ -667,7 +678,6 @@ class _HomeScreenState extends State<HomeScreen>
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const SizedBox(width: 4),
                         const Icon(
                           Icons.verified,
                           size: 16,
@@ -783,6 +793,59 @@ class _HomeScreenState extends State<HomeScreen>
             Icons.chevron_right,
             size: 18,
             color: AppColors.onSurfaceVariant,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOfficialReportCard(BuildContext context) {
+    return AppCard(
+      variant: AppCardVariant.elevated,
+      padding: AppSpacing.cardPadding,
+      onTap: () => Navigator.pushNamed(context, AppRoutes.solarReport),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.secondaryContainer,
+              borderRadius: AppRadii.full,
+            ),
+            child: const Icon(
+              Icons.picture_as_pdf,
+              size: 22,
+              color: AppColors.onSecondaryContainer,
+            ),
+          ),
+          const SizedBox(width: AppSpacing.spaceSm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Official Solar Audit Report',
+                  style: AppTypography.labelLg.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  'View & download your signed feasibility dossier as PDF',
+                  style: AppTypography.bodyMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.arrow_forward_ios,
+            size: 14,
+            color: AppColors.outline,
           ),
         ],
       ),

@@ -22,11 +22,13 @@ import '../screens/roof_drawing/satellite_roof_drawing_screen.dart';
 import '../screens/roof_photo/rooftop_photo_screen.dart';
 import '../screens/roof_result/roof_result_screen.dart';
 import '../screens/solar_report/solar_report_screen.dart';
-import '../screens/splash/splash_screen.dart';
 import '../screens/subsidy_payback/subsidy_payback_screen.dart';
 import '../screens/timeline/installation_timeline_screen.dart';
 import '../screens/vendor_profile/vendor_profile_screen.dart';
+import '../screens/auth/login_screen.dart';
+import '../screens/auth/register_screen.dart';
 import '../screens/welcome/welcome_screen.dart';
+import 'auth_gate.dart';
 import 'routes.dart';
 
 /// ApnaSolar Main Application Configuration
@@ -41,8 +43,10 @@ class ApnaSolarApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: AppRoutes.splash,
       routes: {
-        AppRoutes.splash: (context) => const SplashScreen(),
+        AppRoutes.splash: (context) => const AuthGate(),
         AppRoutes.welcome: (context) => const WelcomeScreen(),
+        AppRoutes.login: (context) => const LoginScreen(),
+        AppRoutes.register: (context) => const RegisterScreen(),
         AppRoutes.howItWorks: (context) => const HowItWorksScreen(),
         AppRoutes.home: (context) => const HomeScreen(),
         AppRoutes.confirmLocation: (context) => const ConfirmLocationScreen(),

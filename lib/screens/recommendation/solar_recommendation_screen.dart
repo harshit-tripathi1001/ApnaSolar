@@ -441,59 +441,69 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Row(
-            children: [
-              InkWell(
-                onTap: () {
-                  if (Navigator.canPop(context)) {
-                    Navigator.pop(context);
-                  } else {
-                    Navigator.pushReplacementNamed(context, AppRoutes.roofResult);
-                  }
-                },
-                borderRadius: AppRadii.full,
-                child: Container(
-                  width: 36,
-                  height: 36,
-                  decoration: const BoxDecoration(
-                    color: AppColors.surfaceContainer,
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.arrow_back,
-                    size: 18,
-                    color: AppColors.onSurface,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceContainerHighest.withValues(
-                    alpha: 0.8,
-                  ),
-                  borderRadius: AppRadii.full,
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const PulsingDot(size: 6, color: AppColors.secondary),
-                    const SizedBox(width: 6),
-                    Text(
-                      'Step 4 of 5',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.onSurfaceVariant,
-                        fontWeight: FontWeight.w600,
+          Flexible(
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (Navigator.canPop(context)) {
+                        Navigator.pop(context);
+                      } else {
+                        Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.roofResult,
+                        );
+                      }
+                    },
+                    borderRadius: AppRadii.full,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: const BoxDecoration(
+                        color: AppColors.surfaceContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back,
+                        size: 18,
+                        color: AppColors.onSurface,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceContainerHighest.withValues(
+                        alpha: 0.8,
+                      ),
+                      borderRadius: AppRadii.full,
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        const PulsingDot(size: 6, color: AppColors.secondary),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Step 4 of 5',
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.onSurfaceVariant,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
 
           // AI Optimized Badge
@@ -554,24 +564,27 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
                 ),
               ],
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.wb_sunny,
-                  size: 14,
-                  color: AppColors.onTertiaryFixed,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  '98.4% Solar Insolation Match',
-                  style: AppTypography.labelMd.copyWith(
-                    fontWeight: FontWeight.bold,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(
+                    Icons.wb_sunny,
+                    size: 14,
                     color: AppColors.onTertiaryFixed,
-                    fontSize: 11,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    '98.4% Solar Insolation Match',
+                    style: AppTypography.labelMd.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.onTertiaryFixed,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 8),
@@ -919,25 +932,28 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
         child: Column(
           children: [
             // Pre-header Tag
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Icon(
-                  Icons.trending_down,
-                  size: 16,
-                  color: AppColors.secondary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'ESTIMATED ELECTRICITY DROP',
-                  style: AppTypography.labelMd.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.8,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(
+                    Icons.trending_down,
+                    size: 16,
                     color: AppColors.secondary,
-                    fontSize: 11,
                   ),
-                ),
-              ],
+                  const SizedBox(width: 4),
+                  Text(
+                    'ESTIMATED ELECTRICITY DROP',
+                    style: AppTypography.labelMd.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                      color: AppColors.secondary,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 6),
 
@@ -984,93 +1000,99 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
                 color: AppColors.surfaceContainerLow,
                 borderRadius: BorderRadius.circular(16),
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Today's Bill
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "TODAY'S BILL",
-                        style: AppTypography.labelMd.copyWith(
-                          fontSize: 9,
-                          letterSpacing: 0.5,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.onSurfaceVariant,
-                        ),
-                      ),
-                      const SizedBox(height: 1),
-                      Text(
-                        '₹${_formatCurrency(widget.currentMonthlyBill)}',
-                        style: AppTypography.headlineSm.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.onSurfaceVariant,
-                          decoration: TextDecoration.lineThrough,
-                          decorationColor: AppColors.error,
-                          decorationThickness: 2,
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Percentage Cut Badge
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColors.secondaryContainer,
-                      borderRadius: AppRadii.full,
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                alignment: Alignment.centerLeft,
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // Today's Bill
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
-                          Icons.arrow_forward,
-                          size: 13,
-                          color: AppColors.onSecondaryContainer,
-                        ),
-                        const SizedBox(width: 2),
                         Text(
-                          '87% Cut',
+                          "TODAY'S BILL",
                           style: AppTypography.labelMd.copyWith(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w900,
-                            color: AppColors.onSecondaryContainer,
+                            fontSize: 9,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.onSurfaceVariant,
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+                        Text(
+                          '₹${_formatCurrency(widget.currentMonthlyBill)}',
+                          style: AppTypography.headlineSm.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.onSurfaceVariant,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: AppColors.error,
+                            decorationThickness: 2,
                           ),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(width: 20),
 
-                  // With ApnaSolar
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'WITH APNASOLAR',
-                        style: AppTypography.labelMd.copyWith(
-                          fontSize: 9,
-                          letterSpacing: 0.5,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.secondary,
-                        ),
+                    // Percentage Cut Badge
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 4,
                       ),
-                      const SizedBox(height: 1),
-                      Text(
-                        '₹${_formatCurrency(_financials.projectedMonthlyBill)}',
-                        style: AppTypography.headlineSm.copyWith(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.primary,
-                        ),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryContainer,
+                        borderRadius: AppRadii.full,
                       ),
-                    ],
-                  ),
-                ],
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(
+                            Icons.arrow_forward,
+                            size: 13,
+                            color: AppColors.onSecondaryContainer,
+                          ),
+                          const SizedBox(width: 2),
+                          Text(
+                            '87% Cut',
+                            style: AppTypography.labelMd.copyWith(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                              color: AppColors.onSecondaryContainer,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 20),
+
+                    // With ApnaSolar
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'WITH APNASOLAR',
+                          style: AppTypography.labelMd.copyWith(
+                            fontSize: 9,
+                            letterSpacing: 0.5,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.secondary,
+                          ),
+                        ),
+                        const SizedBox(height: 1),
+                        Text(
+                          '₹${_formatCurrency(_financials.projectedMonthlyBill)}',
+                          style: AppTypography.headlineSm.copyWith(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 12),
@@ -1210,14 +1232,15 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
             const SizedBox(height: 8),
 
             // Chart Legend
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 14,
+              runSpacing: 4,
               children: [
                 _chartLegendItem(
                   color: AppColors.secondary,
                   label: 'Solar Generated',
                 ),
-                const SizedBox(width: 14),
                 _chartLegendItem(
                   color: AppColors.error.withValues(alpha: 0.6),
                   label: 'Baseline Use (420)',
@@ -1404,32 +1427,38 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
                   ),
                 ),
                 const SizedBox(height: 4),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Year 0',
-                      style: AppTypography.bodyMd.copyWith(
-                        fontSize: 9,
-                        color: AppColors.onSurfaceVariant,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Year 0',
+                        style: AppTypography.bodyMd.copyWith(
+                          fontSize: 9,
+                          color: AppColors.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Break-even (${_financials.paybackPeriodYears.toStringAsFixed(1)}y)',
-                      style: AppTypography.labelMd.copyWith(
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                        color: const Color(0xFF8A6500),
+                      const SizedBox(width: 24),
+                      Text(
+                        'Break-even (${_financials.paybackPeriodYears.toStringAsFixed(1)}y)',
+                        style: AppTypography.labelMd.copyWith(
+                          fontSize: 9,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(0xFF8A6500),
+                        ),
                       ),
-                    ),
-                    Text(
-                      'Year 25 (84.8% Guarantee)',
-                      style: AppTypography.bodyMd.copyWith(
-                        fontSize: 9,
-                        color: AppColors.onSurfaceVariant,
+                      const SizedBox(width: 24),
+                      Text(
+                        'Year 25 (84.8% Guarantee)',
+                        style: AppTypography.bodyMd.copyWith(
+                          fontSize: 9,
+                          color: AppColors.onSurfaceVariant,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -1553,7 +1582,8 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
             badge: 'Zero Grid Reliance',
             badgeBg: AppColors.secondaryFixed,
             badgeColor: AppColors.onSecondaryFixed,
-            body: 'Power 2× 1.5 Ton Inverter ACs, refrigerator, geyser, and EV 2-wheeler charging effortlessly during peak sun hours.',
+            body:
+                'Power 2× 1.5 Ton Inverter ACs, refrigerator, geyser, and EV 2-wheeler charging effortlessly during peak sun hours.',
           ),
           const SizedBox(height: AppSpacing.spaceSm),
 
@@ -1566,7 +1596,8 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
             badge: 'Tier-1 DCR',
             badgeBg: AppColors.surfaceContainerHigh,
             badgeColor: AppColors.onSurfaceVariant,
-            body: 'Guaranteed 84.8% performance even at year 25. Includes 10-year hassle-free comprehensive inverter replacement warranty.',
+            body:
+                'Guaranteed 84.8% performance even at year 25. Includes 10-year hassle-free comprehensive inverter replacement warranty.',
           ),
           const SizedBox(height: AppSpacing.spaceSm),
 
@@ -1579,7 +1610,8 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
             badge: 'PM Surya Ghar',
             badgeBg: AppColors.tertiaryFixed,
             badgeColor: AppColors.onTertiaryFixed,
-            body: 'Credited directly to your linked Aadhaar bank account within 30 days of bidirectional net-meter installation.',
+            body:
+                'Credited directly to your linked Aadhaar bank account within 30 days of bidirectional net-meter installation.',
           ),
         ],
       ),
@@ -1691,51 +1723,58 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Row(
-              children: [
-                Container(
-                  width: 44,
-                  height: 44,
-                  decoration: const BoxDecoration(
-                    color: AppColors.secondaryFixed,
-                    shape: BoxShape.circle,
+            Expanded(
+              child: Row(
+                children: [
+                  Container(
+                    width: 44,
+                    height: 44,
+                    decoration: const BoxDecoration(
+                      color: AppColors.secondaryFixed,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.forest,
+                      size: 24,
+                      color: AppColors.onSecondaryFixed,
+                    ),
                   ),
-                  child: const Icon(
-                    Icons.forest,
-                    size: 24,
-                    color: AppColors.onSecondaryFixed,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Lifetime Eco Impact',
+                          style: AppTypography.labelMd.copyWith(
+                            color: AppColors.secondaryFixed,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 11,
+                          ),
+                        ),
+                        Text(
+                          '${_solarEstimate.treeOffsetEquivalent} Trees Saved',
+                          style: AppTypography.headlineSm.copyWith(
+                            color: AppColors.onPrimary,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          '~${_solarEstimate.co2OffsetTonnesPerYear} Tonnes CO₂ offset per year',
+                          style: AppTypography.bodyMd.copyWith(
+                            fontSize: 11,
+                            color: AppColors.onPrimaryContainer,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Lifetime Eco Impact',
-                      style: AppTypography.labelMd.copyWith(
-                        color: AppColors.secondaryFixed,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 11,
-                      ),
-                    ),
-                    Text(
-                      '${_solarEstimate.treeOffsetEquivalent} Trees Saved',
-                      style: AppTypography.headlineSm.copyWith(
-                        color: AppColors.onPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    Text(
-                      '~${_solarEstimate.co2OffsetTonnesPerYear} Tonnes CO₂ offset per year',
-                      style: AppTypography.bodyMd.copyWith(
-                        fontSize: 11,
-                        color: AppColors.onPrimaryContainer,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
+            const SizedBox(width: 8),
             Container(
               width: 40,
               height: 40,
@@ -1814,12 +1853,15 @@ class _SolarRecommendationScreenState extends State<SolarRecommendationScreen>
                     color: AppColors.onSurfaceVariant,
                   ),
                   const SizedBox(width: 4),
-                  Text(
-                    'View Official Solar Audit Report (PDF)',
-                    style: AppTypography.labelMd.copyWith(
-                      color: AppColors.onSurfaceVariant,
-                      fontSize: 11,
-                      decoration: TextDecoration.underline,
+                  Flexible(
+                    child: Text(
+                      'View Official Solar Audit Report (PDF)',
+                      style: AppTypography.labelMd.copyWith(
+                        color: AppColors.onSurfaceVariant,
+                        fontSize: 11,
+                        decoration: TextDecoration.underline,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],

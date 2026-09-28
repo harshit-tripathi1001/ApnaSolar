@@ -23,8 +23,7 @@ void main() {
             routes: {
               AppRoutes.confirmLocation: (context) =>
                   const ConfirmLocationScreen(),
-              AppRoutes.property: (context) =>
-                  const PropertyDetailsScreen(),
+              AppRoutes.property: (context) => const PropertyDetailsScreen(),
               AppRoutes.satelliteRoofDrawing: (context) =>
                   const SatelliteRoofDrawingScreen(),
             },

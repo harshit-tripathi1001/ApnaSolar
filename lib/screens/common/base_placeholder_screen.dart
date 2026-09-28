@@ -56,8 +56,11 @@ class BasePlaceholderScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: AppSpacing.spaceSm),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
                 children: [
                   StatusBadge(
                     label: 'Stitch Screen Ready',
@@ -107,7 +110,9 @@ class BasePlaceholderScreen extends StatelessWidget {
                           vertical: 6,
                         ),
                         decoration: BoxDecoration(
-                          color: AppColors.secondaryContainer.withValues(alpha: 0.5),
+                          color: AppColors.secondaryContainer.withValues(
+                            alpha: 0.5,
+                          ),
                           borderRadius: AppRadii.full,
                         ),
                         child: Row(
@@ -161,8 +166,14 @@ class BasePlaceholderScreen extends StatelessWidget {
                   onPressed: () => Navigator.pushNamed(context, nextRoute!),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Text(nextLabel ?? 'Continue to Next Step'),
+                      Flexible(
+                        child: Text(
+                          nextLabel ?? 'Continue to Next Step',
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       const SizedBox(width: AppSpacing.spaceSm),
                       const Icon(Icons.arrow_forward, size: 18),
                     ],
@@ -178,8 +189,11 @@ class BasePlaceholderScreen extends StatelessWidget {
               if (nextRoute != AppRoutes.home) ...[
                 const SizedBox(height: AppSpacing.spaceSm),
                 TextButton.icon(
-                  onPressed: () =>
-                      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.home, (route) => false),
+                  onPressed: () => Navigator.pushNamedAndRemoveUntil(
+                    context,
+                    AppRoutes.home,
+                    (route) => false,
+                  ),
                   icon: const Icon(Icons.dashboard_rounded, size: 16),
                   label: const Text('Return to Home Dashboard'),
                 ),

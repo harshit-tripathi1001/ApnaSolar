@@ -17,7 +17,8 @@ class NearbyInstallersScreen extends StatelessWidget {
       title: 'Nearby Verified Installers',
       stitchScreenId: '1e0cc8027aab4bd1b7fa71e114f1c868',
       propertyAddress: session.selectedProperty.formattedAddress,
-      description: 'MNRE & DISCOM accredited rooftop solar EPC contractors within 10km of $locality with ratings, verified customer installations, and fast quote turnaround.',
+      description:
+          'MNRE & DISCOM accredited rooftop solar EPC contractors within 10km of $locality with ratings, verified customer installations, and fast quote turnaround.',
       icon: Icons.engineering_rounded,
       nextRoute: AppRoutes.compareVendors,
       nextLabel: 'Compare Vendor Quotes',

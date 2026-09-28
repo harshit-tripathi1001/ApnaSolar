@@ -1,0 +1,17 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Rooftop images — user-scoped path
+    // users/{uid}/properties/{propId}/rooftops/{roofId}/images/{filename}
+    match /users/{userId}/{allPaths=**} {
+      // Only the authenticated owner can read/write
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+
+    // Deny everything else
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

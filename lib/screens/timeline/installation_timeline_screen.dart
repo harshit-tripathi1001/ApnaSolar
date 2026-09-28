@@ -16,7 +16,8 @@ class InstallationTimelineScreen extends StatelessWidget {
       title: 'Installation Countdown',
       stitchScreenId: 'e7eb6bd5ee9c4719b60f6fe51f835abe',
       propertyAddress: session.selectedProperty.formattedAddress,
-      description: '14-day timeline for ${session.selectedProperty.locality} installation:\nSite survey (Done) → BESCOM sanction (Done) → Panel dispatch (Today) → Rooftop mounting (Day 8) → Bi-directional Net meter swap (Day 14).',
+      description:
+          '14-day timeline for ${session.selectedProperty.locality} installation:\nSite survey (Done) → BESCOM sanction (Done) → Panel dispatch (Today) → Rooftop mounting (Day 8) → Bi-directional Net meter swap (Day 14).',
       icon: Icons.timeline_rounded,
       nextRoute: AppRoutes.systemActivated,
       nextLabel: 'Simulate System Activation',
