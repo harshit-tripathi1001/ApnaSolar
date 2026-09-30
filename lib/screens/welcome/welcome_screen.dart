@@ -5,7 +5,6 @@ import '../../core/constants/app_radii.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
-import '../../services/auth_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_card.dart';
 
@@ -52,10 +51,19 @@ class WelcomeScreen extends StatelessWidget {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
-                            Icons.wb_sunny_rounded,
-                            size: 18,
-                            color: AppColors.secondary,
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(4),
+                            child: Image.asset(
+                              'assets/images/app_logo.png',
+                              width: 20,
+                              height: 20,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, _, _) => const Icon(
+                                Icons.wb_sunny_rounded,
+                                size: 18,
+                                color: AppColors.secondary,
+                              ),
+                            ),
                           ),
                           const SizedBox(width: AppSpacing.spaceXs + 2),
                           Text(
@@ -126,10 +134,30 @@ class WelcomeScreen extends StatelessWidget {
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
-                          const Icon(
-                            Icons.solar_power_rounded,
-                            size: 80,
-                            color: Color(0x33B9EED5),
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x33000000),
+                                  blurRadius: 18,
+                                  offset: Offset(0, 6),
+                                ),
+                              ],
+                            ),
+                            child: Image.asset(
+                              'assets/images/app_logo.png',
+                              width: 72,
+                              height: 72,
+                              fit: BoxFit.contain,
+                              errorBuilder: (_, _, _) => const Icon(
+                                Icons.solar_power_rounded,
+                                size: 64,
+                                color: AppColors.primary,
+                              ),
+                            ),
                           ),
                           Positioned(
                             bottom: AppSpacing.spaceMd,
@@ -466,33 +494,6 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
-              ),
-            ),
-            const SizedBox(height: 12),
-
-            // Option 3: Explore as Guest
-            TextButton(
-              onPressed: () async {
-                Navigator.pop(ctx);
-                try {
-                  await AuthService().signInAnonymously();
-                } catch (e) {
-                  debugPrint('Anonymous sign-in note: $e');
-                }
-                if (context.mounted) {
-                  Navigator.pushNamedAndRemoveUntil(
-                    context,
-                    AppRoutes.confirmLocation,
-                    (route) => false,
-                  );
-                }
-              },
-              child: Text(
-                'Explore as Guest (Instant Access)',
-                style: AppTypography.labelMd.copyWith(
-                  color: AppColors.secondary,
-                  fontWeight: FontWeight.w600,
-                ),
               ),
             ),
           ],

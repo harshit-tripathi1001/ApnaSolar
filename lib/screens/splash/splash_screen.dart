@@ -289,19 +289,38 @@ class _SplashScreenState extends State<SplashScreen>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                    width: 32,
-                                    height: 32,
-                                    decoration: const BoxDecoration(
-                                      color: AppColors.primary,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    child: const Icon(
-                                      Icons.solar_power_rounded,
-                                      size: 18,
+                                    width: 44,
+                                    height: 44,
+                                    decoration: BoxDecoration(
                                       color: Colors.white,
+                                      shape: BoxShape.circle,
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: AppColors.primary.withValues(
+                                            alpha: 0.15,
+                                          ),
+                                          blurRadius: 8,
+                                          offset: const Offset(0, 2),
+                                        ),
+                                      ],
+                                    ),
+                                    child: ClipOval(
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(4),
+                                        child: Image.asset(
+                                          'assets/images/app_logo.png',
+                                          fit: BoxFit.contain,
+                                          errorBuilder: (_, _, _) =>
+                                              const Icon(
+                                            Icons.solar_power_rounded,
+                                            size: 20,
+                                            color: AppColors.primary,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                  const SizedBox(width: 8),
+                                  const SizedBox(width: 10),
                                   Text.rich(
                                     TextSpan(
                                       text: 'Apna',

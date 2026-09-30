@@ -25,6 +25,12 @@ class SolarReportScreen extends StatefulWidget {
 class _SolarReportScreenState extends State<SolarReportScreen> {
   bool _isGeneratingPdf = false;
 
+  @override
+  void initState() {
+    super.initState();
+    SolarSessionState().markAuditCompleted();
+  }
+
   Future<void> _handleDownloadPdf() async {
     setState(() => _isGeneratingPdf = true);
     try {
@@ -62,6 +68,11 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
     final financials = session.financialBreakdown;
     final solar = session.solarEstimate;
     final capacity = session.selectedCapacityKw.toStringAsFixed(1);
+    final displayAddress = session.hasUserSetLocation
+        ? prop.formattedAddress
+        : (prop.formattedAddress.isNotEmpty
+              ? prop.formattedAddress
+              : 'Not provided yet');
 
     return Scaffold(
       backgroundColor: AppColors.surfaceContainerLow,
@@ -151,7 +162,7 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      prop.formattedAddress,
+                      displayAddress,
                       style: AppTypography.bodyMd.copyWith(
                         color: AppColors.primaryFixed,
                         fontSize: 12,
@@ -168,13 +179,14 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
                   _metricTile(
                     title: 'System Size',
                     value: '$capacity kW',
-                    unit: '14 Bifacial Panels',
+                    unit: '${solar.panelCount} Panels (${solar.panelType})',
                     color: AppColors.primary,
                   ),
                   const SizedBox(width: AppSpacing.spaceSm),
                   _metricTile(
                     title: 'Central Subsidy',
-                    value: '₹78,000',
+                    value:
+                        '₹${financials.centralDbtSubsidy.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                     unit: 'Direct DBT Credit',
                     color: AppColors.secondary,
                   ),
@@ -185,7 +197,8 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
                 children: [
                   _metricTile(
                     title: 'Annual Savings',
-                    value: '₹${financials.annualSavings.toInt()}',
+                    value:
+                        '₹${financials.annualSavings.toInt().toString().replaceAllMapped(RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'), (Match m) => '${m[1]},')}',
                     unit: 'per year in bank',
                     color: AppColors.secondary,
                   ),
@@ -194,7 +207,8 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
                     title: 'Payback Period',
                     value:
                         '${financials.paybackPeriodYears.toStringAsFixed(1)} Yrs',
-                    unit: '25-Yr ROI: ₹14.2L',
+                    unit:
+                        '25-Yr ROI: ₹${(financials.cumulative25YearSavings / 100000).toStringAsFixed(1)}L',
                     color: AppColors.primary,
                   ),
                 ],
@@ -241,19 +255,29 @@ class _SolarReportScreenState extends State<SolarReportScreen> {
               ),
               const SizedBox(height: AppSpacing.spaceLg),
 
-              // ── Primary Action: Download as PDF ──────────────────────────
+              // ── Step 5 Completion CTA: Connect with Verifier / Installer ──
               AppButton(
+                label: 'Connect with Verifier / Installer',
+                subtitle: 'Find empanelled solar contractors near you',
+                leadingIcon: Icons.engineering_rounded,
+                onPressed: () {
+                  Navigator.pushNamed(context, AppRoutes.nearbyInstallers);
+                },
+              ),
+              const SizedBox(height: AppSpacing.spaceSm),
+
+              // ── Secondary Action: Download as PDF ──────────────────────────
+              AppButton.secondary(
                 label: _isGeneratingPdf
                     ? 'Generating PDF...'
                     : 'Download as PDF Report',
-                subtitle: 'Official signed feasibility dossier',
-                trailingIcon: Icons.download_rounded,
+                icon: Icons.download_rounded,
                 isLoading: _isGeneratingPdf,
                 onPressed: _handleDownloadPdf,
               ),
               const SizedBox(height: AppSpacing.spaceSm),
 
-              // ── Secondary Action: Open Dashboard ─────────────────────────
+              // ── Tertiary Action: Open Dashboard ──────────────────────────
               OutlinedButton.icon(
                 onPressed: _handleOpenDashboard,
                 style: OutlinedButton.styleFrom(

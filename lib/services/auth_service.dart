@@ -6,9 +6,8 @@ import 'package:flutter/foundation.dart';
 ///
 /// Supports:
 /// - Email/password registration and login
-/// - Anonymous authentication (guest flow)
 /// - Session persistence (Firebase handles this automatically)
-/// - Sign out
+/// - Authenticated profile resolution & sign out
 ///
 /// All methods are no-ops when Firebase is not initialized (e.g., in tests
 /// that don't bootstrap Firebase), preventing crashes.
@@ -86,11 +85,55 @@ class AuthService {
     return auth.signInWithEmailAndPassword(email: email, password: password);
   }
 
-  /// Signs in anonymously. Useful for letting users explore before registering.
+  /// Resolves the user's display name adhering strictly to the priority order:
+  /// 1. Firebase Auth [displayName] (e.g. Google account display name or registered name)
+  /// 2. User profile document's saved [name], [fullName], or [displayName]
+  /// 3. Email username (characters before '@') only as a last fallback.
+  static String resolveUserName({
+    User? authUser,
+    Map<String, dynamic>? profileDoc,
+    String fallback = '',
+  }) {
+    // Priority 1: Firebase Auth displayName
+    final authName = authUser?.displayName?.trim();
+    if (authName != null && authName.isNotEmpty) {
+      return authName;
+    }
+
+    // Priority 2: User profile document's saved name/fullName/displayName
+    if (profileDoc != null) {
+      final docName = profileDoc['name'];
+      if (docName is String && docName.trim().isNotEmpty) {
+        return docName.trim();
+      }
+      final docFullName = profileDoc['fullName'];
+      if (docFullName is String && docFullName.trim().isNotEmpty) {
+        return docFullName.trim();
+      }
+      final docDisplayName = profileDoc['displayName'];
+      if (docDisplayName is String && docDisplayName.trim().isNotEmpty) {
+        return docDisplayName.trim();
+      }
+    }
+
+    // Priority 3: Email username only as last fallback
+    final email = authUser?.email?.trim();
+    if (email != null && email.contains('@')) {
+      final emailPrefix = email.split('@').first.trim();
+      if (emailPrefix.isNotEmpty) {
+        return emailPrefix;
+      }
+    }
+
+    return fallback;
+  }
+
+  /// Guest authentication is permanently removed.
+  /// Throws [UnsupportedError] to prevent anonymous sign in.
   Future<UserCredential> signInAnonymously() async {
-    final auth = _auth;
-    if (auth == null) throw Exception('Firebase is not initialized.');
-    return auth.signInAnonymously();
+    throw UnsupportedError(
+      'Guest access has been removed from ApnaSolar. Please sign in or create an account.',
+    );
   }
 
   // ─── Session ──────────────────────────────────────────────────────────────

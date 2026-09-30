@@ -5,6 +5,8 @@ import 'package:google_fonts/google_fonts.dart';
 import '../../app/routes.dart';
 import '../../services/auth_service.dart';
 
+import '../../services/firestore_service.dart';
+
 /// Account registration screen.
 ///
 /// Design tokens match the approved Stitch palette.
@@ -40,11 +42,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
       _errorMessage = null;
     });
     try {
-      await AuthService().registerWithEmail(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        displayName: _nameController.text.trim(),
-      );
+      if (AuthService.isFirebaseInitialized) {
+        final credential = await AuthService().registerWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+          displayName: _nameController.text.trim(),
+        );
+        final uid = credential.user?.uid;
+        if (uid != null) {
+          try {
+            await FirestoreService().upsertUserProfile(
+              uid: uid,
+              email: _emailController.text.trim(),
+              displayName: _nameController.text.trim(),
+            );
+          } catch (e) {
+            debugPrint('Failed to save profile document: $e');
+          }
+        }
+      }
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -86,23 +102,58 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  'Join ApnaSolar',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF003323),
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 52,
+                      height: 52,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x18000000),
+                            blurRadius: 10,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                      ),
+                      padding: const EdgeInsets.all(6),
+                      child: Image.asset(
+                        'assets/images/app_logo.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, _, _) => const Icon(
+                          Icons.solar_power_rounded,
+                          size: 32,
+                          color: Color(0xFF003323),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 14),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Join ApnaSolar',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                            color: const Color(0xFF003323),
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'Start your rooftop solar journey.',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            color: const Color(0xFF003323).withAlpha(153),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  'Start your rooftop solar journey today.',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: const Color(0xFF003323).withAlpha(153),
-                  ),
-                ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 28),
 
                 // ── Name ──────────────────────────────────────────────────
                 _buildLabel('Full Name'),

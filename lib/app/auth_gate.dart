@@ -31,9 +31,14 @@ class AuthGate extends StatelessWidget {
           return const _AuthLoadingScreen();
         }
 
-        // Signed in (including anonymous) → normal app flow
-        if (snapshot.hasData && snapshot.data != null) {
+        // Signed in with real account (not anonymous) → normal app flow
+        if (snapshot.hasData && snapshot.data != null && !snapshot.data!.isAnonymous) {
           return const SplashScreen();
+        }
+
+        // If an anonymous user session was stored, sign out immediately
+        if (snapshot.hasData && snapshot.data != null && snapshot.data!.isAnonymous) {
+          AuthService().signOut();
         }
 
         // Not signed in → show WelcomeScreen with "Get Started"

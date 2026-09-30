@@ -64,6 +64,8 @@ class AppTypography {
     color: AppColors.onSurface,
   );
 
+  static TextStyle get titleLg => headlineSm;
+
   static TextStyle get bodyLg => GoogleFonts.plusJakartaSans(
     fontSize: 16.0,
     fontWeight: FontWeight.w400,

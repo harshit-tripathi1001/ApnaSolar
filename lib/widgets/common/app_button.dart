@@ -36,6 +36,44 @@ class AppButton extends StatelessWidget {
     this.subtitle,
   });
 
+  factory AppButton.primary({
+    Key? key,
+    required String label,
+    required VoidCallback? onPressed,
+    IconData? icon,
+    bool isLoading = false,
+    double? width,
+    double height = 54.0,
+  }) => AppButton(
+    key: key,
+    label: label,
+    onPressed: onPressed,
+    variant: AppButtonVariant.primary,
+    leadingIcon: icon,
+    isLoading: isLoading,
+    width: width,
+    height: height,
+  );
+
+  factory AppButton.secondary({
+    Key? key,
+    required String label,
+    required VoidCallback? onPressed,
+    IconData? icon,
+    bool isLoading = false,
+    double? width,
+    double height = 54.0,
+  }) => AppButton(
+    key: key,
+    label: label,
+    onPressed: onPressed,
+    variant: AppButtonVariant.secondary,
+    leadingIcon: icon,
+    isLoading: isLoading,
+    width: width,
+    height: height,
+  );
+
   @override
   Widget build(BuildContext context) {
     Color backgroundColor;

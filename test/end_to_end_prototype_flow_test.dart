@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:apnasolar/app/apnasolar_app.dart';
 import 'package:apnasolar/app/routes.dart';
 import 'package:apnasolar/screens/analysis/ai_roof_analysis_screen.dart';
+import 'package:apnasolar/screens/auth/register_screen.dart';
 import 'package:apnasolar/screens/cost_breakdown/cost_breakdown_screen.dart';
 import 'package:apnasolar/screens/home/home_screen.dart';
 import 'package:apnasolar/screens/location/confirm_location_screen.dart';
@@ -52,18 +53,53 @@ void main() {
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
-        // Verify bottom sheet options: Create Account, Sign In, and Explore as Guest
+        // Verify bottom sheet options: Create Account and Sign In (no guest option)
         expect(find.text('Create Account'), findsOneWidget);
-        expect(find.textContaining('Explore as Guest'), findsOneWidget);
+        expect(find.text('Sign In with Existing Account'), findsOneWidget);
+        expect(find.textContaining('Explore as Guest'), findsNothing);
 
-        // Tap "Explore as Guest" to initiate the direct step-by-step solar assessment
-        await tester.tap(find.textContaining('Explore as Guest'));
+        // Tap "Create Account" to initiate user registration
+        await tester.tap(find.text('Create Account'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        // In RegisterScreen, enter details and submit
+        expect(find.byType(RegisterScreen), findsOneWidget);
+        await tester.enterText(
+          find.byType(TextFormField).at(0),
+          'Ramesh Sharma',
+        );
+        await tester.enterText(
+          find.byType(TextFormField).at(1),
+          'ramesh@apnasolar.com',
+        );
+        await tester.enterText(
+          find.byType(TextFormField).at(2),
+          'password123',
+        );
+        await tester.tap(find.widgetWithText(FilledButton, 'Create Account'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
 
         // 3. Location: ConfirmLocationScreen (Step 1 of 5)
         expect(find.byType(ConfirmLocationScreen), findsOneWidget);
         expect(find.text('Step 1 of 5 · Location'), findsOneWidget);
+
+        // If location permission dialog appears, dismiss / allow it
+        final denyFinder = find.text('Deny');
+        if (denyFinder.evaluate().isNotEmpty) {
+          await tester.tap(denyFinder);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 500));
+        } else {
+          final allowFinder = find.text('Allow Location');
+          if (allowFinder.evaluate().isNotEmpty) {
+            await tester.tap(allowFinder);
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 500));
+          }
+        }
+
         expect(find.text('Confirm Location'), findsOneWidget);
 
         // Tap "Confirm Location" to advance to Property Details
@@ -87,6 +123,18 @@ void main() {
         // 5. Rooftop: SatelliteRoofDrawingScreen (Step 3 of 5)
         expect(find.byType(SatelliteRoofDrawingScreen), findsOneWidget);
         expect(find.text('Step 3 of 5 · Roof Boundary'), findsOneWidget);
+
+        // If camera capture bottom sheet appears, select satellite drawing canvas
+        final satFinder = find.text('Use Satellite Drawing Canvas');
+        if (satFinder.evaluate().isNotEmpty) {
+          await tester.ensureVisible(satFinder);
+          await tester.pump(const Duration(milliseconds: 200));
+          await tester.tap(satFinder);
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 600));
+          await tester.pump(const Duration(milliseconds: 600));
+        }
+
         expect(find.text('Use This Roof Boundary'), findsOneWidget);
 
         // Tap "Use This Roof Boundary" to proceed to AI Scan
@@ -233,6 +281,8 @@ void main() {
         await tester.pump();
 
         // Save & proceed to rooftop boundary
+        await tester.ensureVisible(find.text('Proceed to Rooftop Boundary'));
+        await tester.pump(const Duration(milliseconds: 200));
         await tester.tap(find.text('Proceed to Rooftop Boundary'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));
@@ -295,6 +345,8 @@ void main() {
         expect(find.byType(PropertyDetailsScreen), findsOneWidget);
 
         // Proceed forward to Roof Drawing
+        await tester.ensureVisible(find.text('Proceed to Rooftop Boundary'));
+        await tester.pump(const Duration(milliseconds: 200));
         await tester.tap(find.text('Proceed to Rooftop Boundary'));
         await tester.pump();
         await tester.pump(const Duration(milliseconds: 500));

@@ -1,3 +1,4 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
@@ -9,6 +10,19 @@ import '../../services/solar_session_service.dart';
 import '../../widgets/common/app_button.dart';
 import '../../widgets/common/app_card.dart';
 import '../../widgets/common/status_badge.dart';
+
+/// Representation of an uploaded utility bill file
+class UploadedBill {
+  final String name;
+  final String size;
+  final String monthLabel;
+
+  const UploadedBill({
+    required this.name,
+    required this.size,
+    required this.monthLabel,
+  });
+}
 
 /// Property Details Screen (Step 2 of 5 in ApnaSolar Prototype)
 /// Connects Location with Rooftop boundary calibration, allowing homeowners
@@ -74,6 +88,9 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
 
   final List<double> _billPresets = [2500.0, 3850.0, 5200.0, 7500.0];
 
+  final List<UploadedBill> _uploadedBills = [];
+  bool _isPickingFile = false;
+
   @override
   void initState() {
     super.initState();
@@ -81,6 +98,69 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
     _selectedRoofType = _session.roofType;
     _monthlyBill = _session.monthlyBill;
     _sanctionedLoadKw = _session.sanctionedLoadKw;
+    for (int i = 0; i < _session.uploadedBills.length; i++) {
+      final name = _session.uploadedBills[i];
+      final month = (i == 0)
+          ? 'Month 1 (Latest Bill)'
+          : (i == 1)
+          ? 'Month 2 (Previous Bill)'
+          : 'Month ${i + 1} Bill';
+      _uploadedBills.add(
+        UploadedBill(name: name, size: '142 KB', monthLabel: month),
+      );
+    }
+  }
+
+  Future<void> _pickBills() async {
+    setState(() => _isPickingFile = true);
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
+
+      if (result.isNotEmpty) {
+        setState(() {
+          for (final file in result) {
+            final sizeBytes = file.lengthSync() ?? 128000;
+            final sizeKb = (sizeBytes / 1024).round();
+            final count = _uploadedBills.length + 1;
+            final month = count == 1
+                ? 'Month 1 (Latest Bill)'
+                : count == 2
+                ? 'Month 2 (Previous Bill)'
+                : 'Month $count Bill';
+            _uploadedBills.add(
+              UploadedBill(
+                name: file.name,
+                size: '$sizeKb KB',
+                monthLabel: month,
+              ),
+            );
+          }
+        });
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              backgroundColor: AppColors.primary,
+              content: Text(
+                '✓ ${_uploadedBills.length} electricity bills attached successfully!',
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint('File picker error: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open file picker: $e')),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isPickingFile = false);
+    }
   }
 
   void _saveAndProceed() {
@@ -89,6 +169,7 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
       roofType: _selectedRoofType,
       monthlyBill: _monthlyBill,
       sanctionedLoadKw: _sanctionedLoadKw,
+      uploadedBills: _uploadedBills.map((b) => b.name).toList(),
     );
     Navigator.pushNamed(context, AppRoutes.satelliteRoofDrawing);
   }
@@ -144,6 +225,15 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
                     ),
                     const SizedBox(height: AppSpacing.spaceSm),
                     _buildBillSelector(),
+                    const SizedBox(height: AppSpacing.spaceMd),
+
+                    // Upload Last 2 Months Electricity Bills (PDF)
+                    _buildSectionHeader(
+                      'Upload Last 2 Months Bills',
+                      'Attach multiple PDF utility bills for subsidy & sanction load calibration',
+                    ),
+                    const SizedBox(height: AppSpacing.spaceSm),
+                    _buildBillUploadSection(),
                     const SizedBox(height: AppSpacing.spaceLg),
 
                     // DISCOM & Sanctioned Load Specs
@@ -615,6 +705,213 @@ class _PropertyDetailsScreenState extends State<PropertyDetailsScreen> {
               max: 12000.0,
               divisions: 21,
               onChanged: (val) => setState(() => _monthlyBill = val),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBillUploadSection() {
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: AppRadii.card,
+        border: Border.all(
+          color: AppColors.outlineVariant.withValues(alpha: 0.5),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  color: AppColors.secondaryContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.secondary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Electricity Bills (Last 2 Months)',
+                      style: AppTypography.labelMd.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.onSurface,
+                      ),
+                    ),
+                    Text(
+                      'PDF format • Accelerates MNRE Subsidy approval',
+                      style: AppTypography.bodyMd.copyWith(
+                        fontSize: 11,
+                        color: AppColors.outline,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+
+          // Uploaded bill items list
+          if (_uploadedBills.isNotEmpty) ...[
+            ..._uploadedBills.asMap().entries.map((entry) {
+              final idx = entry.key;
+              final bill = entry.value;
+              return Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.surfaceContainerLow,
+                  borderRadius: AppRadii.cardSm,
+                  border: Border.all(
+                    color: AppColors.secondary.withValues(alpha: 0.3),
+                  ),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(
+                      Icons.picture_as_pdf_rounded,
+                      color: Color(0xFFE53935),
+                      size: 24,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            bill.name,
+                            style: AppTypography.bodyMd.copyWith(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 12,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Text(
+                                '${bill.monthLabel} • ${bill.size}',
+                                style: AppTypography.bodyMd.copyWith(
+                                  fontSize: 10,
+                                  color: AppColors.outline,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 1,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.secondaryContainer,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  'Ready for OCR',
+                                  style: TextStyle(
+                                    fontSize: 9,
+                                    color: AppColors.onSecondaryContainer,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: AppColors.outline,
+                        size: 20,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _uploadedBills.removeAt(idx);
+                        });
+                      },
+                      tooltip: 'Remove',
+                    ),
+                  ],
+                ),
+              );
+            }),
+            const SizedBox(height: 4),
+          ],
+
+          // Pick Button / Add More Button
+          InkWell(
+            onTap: _isPickingFile ? null : _pickBills,
+            borderRadius: AppRadii.cardSm,
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              decoration: BoxDecoration(
+                color: _uploadedBills.isEmpty
+                    ? AppColors.surfaceContainerLow
+                    : AppColors.surfaceContainerLowest,
+                borderRadius: AppRadii.cardSm,
+                border: Border.all(
+                  color: _uploadedBills.isEmpty
+                      ? AppColors.secondary
+                      : AppColors.outlineVariant,
+                  style: BorderStyle.solid,
+                ),
+              ),
+              child: _isPickingFile
+                  ? const Center(
+                      child: SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          _uploadedBills.isEmpty
+                              ? Icons.file_upload_outlined
+                              : Icons.add_circle_outline_rounded,
+                          size: 18,
+                          color: AppColors.secondary,
+                        ),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            _uploadedBills.isEmpty
+                                ? 'Upload Bills (PDF)'
+                                : 'Upload Another Bill (PDF)',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.secondary,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
             ),
           ),
         ],

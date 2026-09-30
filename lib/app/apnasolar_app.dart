@@ -49,10 +49,11 @@ class ApnaSolarApp extends StatelessWidget {
         AppRoutes.register: (context) => const RegisterScreen(),
         AppRoutes.howItWorks: (context) => const HowItWorksScreen(),
         AppRoutes.home: (context) => const HomeScreen(),
-        AppRoutes.confirmLocation: (context) => const ConfirmLocationScreen(),
+        AppRoutes.confirmLocation: (context) =>
+            const ConfirmLocationScreen(autoPromptLocation: true),
         AppRoutes.property: (context) => const PropertyDetailsScreen(),
         AppRoutes.satelliteRoofDrawing: (context) =>
-            const SatelliteRoofDrawingScreen(),
+            const SatelliteRoofDrawingScreen(autoPromptCamera: true),
         AppRoutes.rooftopPhoto: (context) => const RooftopPhotoScreen(),
         AppRoutes.aiRoofAnalysis: (context) => const AiRoofAnalysisScreen(),
         AppRoutes.roofResult: (context) => const RoofResultScreen(),

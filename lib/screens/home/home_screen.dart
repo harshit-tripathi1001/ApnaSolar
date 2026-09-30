@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../app/routes.dart';
@@ -5,6 +8,8 @@ import '../../core/constants/app_radii.dart';
 import '../../core/constants/app_spacing.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
+import '../../services/auth_service.dart';
+import '../../services/firestore_service.dart';
 import '../../services/solar_session_service.dart';
 import '../../widgets/app_shell.dart';
 import '../../widgets/common/app_button.dart';
@@ -29,6 +34,11 @@ class _HomeScreenState extends State<HomeScreen>
   late final Animation<double> _fadeAnimation;
   late final Animation<Offset> _slideAnimation;
 
+  StreamSubscription<User?>? _authSubscription;
+  StreamSubscription<Map<String, dynamic>?>? _profileSubscription;
+  User? _currentUser;
+  Map<String, dynamic>? _userProfile;
+
   // Stitch Hero rooftop image URL
   static const String _heroImageUrl =
       'https://lh3.googleusercontent.com/aida-public/AB6AXuDRRmJ5hpubzWN3YDnVPcL8vQtTk9y050FDXyiwGuazTFflTHMe3IU7DAPNobww69EGJPLuWnmo3Ly4XnnaGEgIoNZ3egYP8EcpHaaNL_-aWc8eW7gU57ojmD3sGOJXbnIp6ZIRJHhSbYNcZTqd4_Qs4Y9n2n-zof7MhSfReBhhjgVmqgsfQkIbmyVPR1y-98U1C1LZI__k6wYvX2-RkN38qlCJdW_2wtTq7UZJUTTY2x1jvG4wHqc';
@@ -51,8 +61,38 @@ class _HomeScreenState extends State<HomeScreen>
           CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
         );
 
+    _currentUser = AuthService().currentUser;
+    _subscribeToUserAndProfile();
+
     SolarSessionState().addListener(_onSessionChanged);
     _animController.forward();
+  }
+
+  void _subscribeToUserAndProfile() {
+    _authSubscription = AuthService().authStateChanges.listen((user) {
+      if (mounted) {
+        setState(() {
+          _currentUser = user;
+        });
+        _listenToProfile(user?.uid);
+      }
+    });
+    _listenToProfile(_currentUser?.uid);
+  }
+
+  void _listenToProfile(String? uid) {
+    _profileSubscription?.cancel();
+    _profileSubscription = null;
+    if (uid != null && uid.isNotEmpty) {
+      _profileSubscription =
+          FirestoreService().userProfileStream(uid).listen((profile) {
+        if (mounted) {
+          setState(() {
+            _userProfile = profile;
+          });
+        }
+      });
+    }
   }
 
   void _onSessionChanged() {
@@ -65,6 +105,8 @@ class _HomeScreenState extends State<HomeScreen>
 
   @override
   void dispose() {
+    _authSubscription?.cancel();
+    _profileSubscription?.cancel();
     SolarSessionState().removeListener(_onSessionChanged);
     _animController.dispose();
     super.dispose();
@@ -323,6 +365,22 @@ class _HomeScreenState extends State<HomeScreen>
   }
 
   Widget _buildGreetingSection() {
+    final hour = DateTime.now().hour;
+    final timeGreeting = (hour >= 5 && hour < 12)
+        ? 'Good morning'
+        : (hour >= 12 && hour < 17)
+            ? 'Good afternoon'
+            : 'Good evening';
+
+    final userName = AuthService.resolveUserName(
+      authUser: _currentUser ?? AuthService().currentUser,
+      profileDoc: _userProfile,
+    );
+
+    final greetingTitle = userName.isNotEmpty
+        ? '$timeGreeting, $userName'
+        : timeGreeting;
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -331,7 +389,7 @@ class _HomeScreenState extends State<HomeScreen>
           spacing: 6,
           children: [
             Text(
-              'Good morning, Ramesh',
+              greetingTitle,
               style: AppTypography.headlineLgMobile.copyWith(
                 color: AppColors.onSurface,
                 fontWeight: FontWeight.bold,

@@ -45,10 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _errorMessage = null;
     });
     try {
-      await AuthService().signInWithEmail(
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-      );
+      if (AuthService.isFirebaseInitialized) {
+        await AuthService().signInWithEmail(
+          email: _emailController.text.trim(),
+          password: _passwordController.text,
+        );
+      }
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,
@@ -63,29 +65,6 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       setState(() {
         _errorMessage = 'Something went wrong. Please try again.';
-      });
-    } finally {
-      if (mounted) setState(() => _isLoading = false);
-    }
-  }
-
-  Future<void> _continueAsGuest() async {
-    setState(() {
-      _isLoading = true;
-      _errorMessage = null;
-    });
-    try {
-      await AuthService().signInAnonymously();
-      if (mounted) {
-        Navigator.pushNamedAndRemoveUntil(
-          context,
-          AppRoutes.confirmLocation,
-          (route) => false,
-        );
-      }
-    } catch (e) {
-      setState(() {
-        _errorMessage = 'Could not sign in anonymously. Check your connection.';
       });
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -108,6 +87,34 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 const SizedBox(height: 24),
                 // ── Brand ──────────────────────────────────────────────────
+                Center(
+                  child: Container(
+                    width: 72,
+                    height: 72,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x18000000),
+                          blurRadius: 14,
+                          offset: Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: Image.asset(
+                      'assets/images/app_logo.png',
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, _, _) => const Icon(
+                        Icons.solar_power_rounded,
+                        size: 40,
+                        color: Color(0xFF003323),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
                 Center(
                   child: Text.rich(
                     TextSpan(
@@ -275,48 +282,6 @@ class _LoginScreenState extends State<LoginScreen> {
                               color: Colors.white,
                             ),
                           ),
-                  ),
-                ),
-                const SizedBox(height: 16),
-
-                // ── Divider ────────────────────────────────────────────────
-                Row(
-                  children: [
-                    const Expanded(child: Divider(color: Color(0xFFDDD8C4))),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Text(
-                        'or',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          color: const Color(0xFF003323).withAlpha(128),
-                        ),
-                      ),
-                    ),
-                    const Expanded(child: Divider(color: Color(0xFFDDD8C4))),
-                  ],
-                ),
-                const SizedBox(height: 16),
-
-                // ── Guest ──────────────────────────────────────────────────
-                SizedBox(
-                  height: 52,
-                  child: OutlinedButton(
-                    onPressed: _isLoading ? null : _continueAsGuest,
-                    style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFF0B6D33)),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                    ),
-                    child: Text(
-                      'Continue as Guest',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF0B6D33),
-                      ),
-                    ),
                   ),
                 ),
                 const SizedBox(height: 32),

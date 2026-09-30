@@ -24,6 +24,9 @@ class SolarEstimate {
     required this.co2OffsetTonnesPerYear,
   });
 
+  double get co2MitigationTonsPerYear => co2OffsetTonnesPerYear;
+  int get treesEquivalentPlanted => treeOffsetEquivalent;
+
   factory SolarEstimate.mockOptimal() {
     return const SolarEstimate(
       capacityKw: 5.8,

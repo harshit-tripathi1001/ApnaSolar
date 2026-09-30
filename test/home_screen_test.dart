@@ -17,7 +17,16 @@ void main() {
       expect(find.text('High Sun Day'), findsOneWidget);
 
       // Verify Greeting
-      expect(find.text('Good morning, Ramesh'), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (w) =>
+              w is Text &&
+              (w.data?.startsWith('Good morning') == true ||
+                  w.data?.startsWith('Good afternoon') == true ||
+                  w.data?.startsWith('Good evening') == true),
+        ),
+        findsOneWidget,
+      );
       expect(
         find.text(
           'Clear skies over your terrace today. Ready to turn sun into real savings?',

@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/financial_breakdown.dart';
+import '../models/installer_provider.dart';
 import '../models/property_location.dart';
 import '../models/rooftop_analysis.dart';
 import '../models/solar_estimate.dart';
+import '../models/user_solar_project.dart';
 
 /// Firestore document paths for ApnaSolar.
 ///
@@ -13,6 +16,7 @@ import '../models/solar_estimate.dart';
 ///   properties/{propertyId}
 ///     rooftops/{rooftopId}
 ///   analyses/{analysisId}
+///   projects/{projectId}
 /// ```
 class FirestorePaths {
   FirestorePaths._();
@@ -28,6 +32,9 @@ class FirestorePaths {
   static String analysesCol(String uid) => 'users/$uid/analyses';
   static String analysisDoc(String uid, String analysisId) =>
       'users/$uid/analyses/$analysisId';
+  static String projectsCol(String uid) => 'users/$uid/projects';
+  static String projectDoc(String uid, String projectId) =>
+      'users/$uid/projects/$projectId';
 }
 
 /// Wraps Cloud Firestore with typed read/write operations for ApnaSolar.
@@ -54,6 +61,30 @@ class FirestoreService {
       'photoUrl': ?photoUrl,
       'updatedAt': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  /// Fetches the user profile document from Firestore.
+  Future<Map<String, dynamic>?> getUserProfile(String uid) async {
+    try {
+      final doc = await _db.doc(FirestorePaths.userDoc(uid)).get();
+      return doc.data();
+    } catch (e) {
+      debugPrint('FirestoreService.getUserProfile error: $e');
+      return null;
+    }
+  }
+
+  /// Streams the user profile document from Firestore.
+  Stream<Map<String, dynamic>?> userProfileStream(String uid) {
+    try {
+      return _db
+          .doc(FirestorePaths.userDoc(uid))
+          .snapshots()
+          .map((snapshot) => snapshot.data());
+    } catch (e) {
+      debugPrint('FirestoreService.userProfileStream error: $e');
+      return const Stream.empty();
+    }
   }
 
   // ─── Properties ───────────────────────────────────────────────────────────
@@ -261,5 +292,62 @@ class FirestoreService {
       longitude: (doc['longitude'] as num).toDouble(),
       peakSunHoursPerDay: (doc['peakSunHoursPerDay'] as num? ?? 5.2).toDouble(),
     );
+  }
+
+  // ─── Solar Projects ───────────────────────────────────────────────────────
+
+  /// Saves or updates a unified [UserSolarProject].
+  Future<void> saveUserProject({
+    required String uid,
+    required UserSolarProject project,
+  }) async {
+    final docRef = _db.doc(FirestorePaths.projectDoc(uid, project.id));
+    await docRef.set(project.toJson(), SetOptions(merge: true));
+  }
+
+  /// Gets the most recent project for a user.
+  Future<UserSolarProject?> getLatestUserProject(String uid) async {
+    try {
+      final snap = await _db
+          .collection(FirestorePaths.projectsCol(uid))
+          .orderBy('updatedAt', descending: true)
+          .limit(1)
+          .get();
+      if (snap.docs.isEmpty) return null;
+      return UserSolarProject.fromJson(
+        snap.docs.first.data(),
+        snap.docs.first.id,
+      );
+    } catch (e) {
+      debugPrint('FirestoreService.getLatestUserProject error: $e');
+      return null;
+    }
+  }
+
+  /// Streams user projects ordered by updatedAt.
+  Stream<List<UserSolarProject>> streamUserProjects(String uid) {
+    return _db
+        .collection(FirestorePaths.projectsCol(uid))
+        .orderBy('updatedAt', descending: true)
+        .snapshots()
+        .map(
+          (snap) => snap.docs
+              .map((doc) => UserSolarProject.fromJson(doc.data(), doc.id))
+              .toList(),
+        );
+  }
+
+  /// Saves the selected installer to the project.
+  Future<void> saveSelectedInstaller({
+    required String uid,
+    required String projectId,
+    required VerifiedInstaller installer,
+  }) async {
+    final docRef = _db.doc(FirestorePaths.projectDoc(uid, projectId));
+    await docRef.set({
+      'selectedInstaller': installer.toJson(),
+      'status': 'Installer Connected',
+      'updatedAt': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 }

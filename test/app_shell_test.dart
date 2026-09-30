@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:apnasolar/app/routes.dart';
 import 'package:apnasolar/widgets/app_shell.dart';
 import 'package:apnasolar/widgets/common/app_button.dart';
 import 'package:apnasolar/widgets/common/app_card.dart';
@@ -218,5 +219,45 @@ void main() {
       expect(find.text('Elevated Card'), findsOneWidget);
       expect(find.text('Banner Card'), findsOneWidget);
     });
+
+    testWidgets(
+      'Tapping profile avatar opens profile menu with Log Out option',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            routes: {
+              AppRoutes.login: (ctx) =>
+                  const Scaffold(body: Text('Login Screen Mock')),
+            },
+            home: const AppShell(
+              currentIndex: 0,
+              child: Center(child: Text('Dashboard Content')),
+            ),
+          ),
+        );
+
+        // Verify avatar icon exists
+        final avatarFinder = find.byIcon(Icons.person);
+        expect(avatarFinder, findsOneWidget);
+
+        // Tap the avatar
+        await tester.tap(avatarFinder);
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        // Verify profile menu elements
+        expect(find.text('Log Out'), findsOneWidget);
+        expect(find.byIcon(Icons.logout_rounded), findsOneWidget);
+        expect(find.text('Installation Location'), findsOneWidget);
+
+        // Tap Log Out
+        await tester.tap(find.text('Log Out'));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+
+        // Verify redirection to login screen
+        expect(find.text('Login Screen Mock'), findsOneWidget);
+      },
+    );
   });
 }

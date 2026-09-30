@@ -24,12 +24,19 @@ class PdfReportService {
       author: 'ApnaSolar AI Engine',
     );
 
+    pw.ImageProvider? logoImage;
+    try {
+      logoImage = await imageFromAssetBundle('assets/images/app_logo.png');
+    } catch (_) {
+      // Offline / headless test fallback
+    }
+
     final currentUser = user ?? AuthService().currentUser;
-    final userName =
-        currentUser?.displayName ??
-        (currentUser?.isAnonymous == true
-            ? 'Guest Consumer'
-            : 'Solar Consumer');
+    final resolvedName = AuthService.resolveUserName(
+      authUser: currentUser,
+      fallback: 'Solar Homeowner',
+    );
+    final userName = resolvedName.isNotEmpty ? resolvedName : 'Solar Homeowner';
     final userEmail = currentUser?.email ?? 'Direct Portal Assessment';
 
     final prop = session.selectedProperty;
@@ -57,24 +64,44 @@ class PdfReportService {
                 child: pw.Row(
                   mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                   children: [
-                    pw.Column(
-                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    pw.Row(
                       children: [
-                        pw.Text(
-                          'APNASOLAR',
-                          style: pw.TextStyle(
-                            color: PdfColor.fromHex('#F5C542'),
-                            fontSize: 22,
-                            fontWeight: pw.FontWeight.bold,
+                        if (logoImage != null)
+                          pw.Container(
+                            width: 36,
+                            height: 36,
+                            margin: const pw.EdgeInsets.only(right: 12),
+                            decoration: const pw.BoxDecoration(
+                              color: PdfColors.white,
+                              borderRadius: pw.BorderRadius.all(
+                                pw.Radius.circular(6),
+                              ),
+                            ),
+                            child: pw.Padding(
+                              padding: const pw.EdgeInsets.all(3),
+                              child: pw.Image(logoImage),
+                            ),
                           ),
-                        ),
-                        pw.SizedBox(height: 2),
-                        pw.Text(
-                          'National Rooftop Solar Feasibility Audit Report',
-                          style: const pw.TextStyle(
-                            color: PdfColors.white,
-                            fontSize: 10,
-                          ),
+                        pw.Column(
+                          crossAxisAlignment: pw.CrossAxisAlignment.start,
+                          children: [
+                            pw.Text(
+                              'APNASOLAR',
+                              style: pw.TextStyle(
+                                color: PdfColor.fromHex('#F5C542'),
+                                fontSize: 22,
+                                fontWeight: pw.FontWeight.bold,
+                              ),
+                            ),
+                            pw.SizedBox(height: 2),
+                            pw.Text(
+                              'National Rooftop Solar Feasibility Audit Report',
+                              style: const pw.TextStyle(
+                                color: PdfColors.white,
+                                fontSize: 10,
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

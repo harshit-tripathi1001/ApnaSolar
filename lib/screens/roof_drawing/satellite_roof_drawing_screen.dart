@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../../app/routes.dart';
 import '../../core/constants/app_radii.dart';
@@ -11,9 +12,11 @@ import '../../widgets/common/status_badge.dart';
 
 /// Satellite Roof Drawing Screen (Stitch: c2f5849a2fce475e852355ebbd623291)
 /// Step 2/3 of 5: Allows homeowners to calibrate their rooftop boundary using
-/// draggable vertex pins with real-time area calculation and obstacle exclusions.
+/// draggable vertex pins with real-time area calculation and obstacle exclusions,
+/// or capture terrace photos via Camera / Gallery.
 class SatelliteRoofDrawingScreen extends StatefulWidget {
-  const SatelliteRoofDrawingScreen({super.key});
+  final bool autoPromptCamera;
+  const SatelliteRoofDrawingScreen({super.key, this.autoPromptCamera = false});
 
   @override
   State<SatelliteRoofDrawingScreen> createState() =>
@@ -39,7 +42,307 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
       const Offset(0.86, 0.74), // Bottom-right
       const Offset(0.22, 0.78), // Bottom-left
     ];
-    _vertices = List.from(_initialVertices);
+    final savedVertices = SolarSessionState().calibratedVertices;
+    if (savedVertices != null && savedVertices.isNotEmpty) {
+      _vertices = List.from(savedVertices);
+    } else {
+      _vertices = List.from(_initialVertices);
+    }
+
+    if (widget.autoPromptCamera) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _showCameraCaptureDialog();
+        }
+      });
+    }
+  }
+
+  void _showCameraCaptureDialog() {
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: false,
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext sheetContext) {
+        return Material(
+          color: AppColors.surfaceContainerLowest,
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(24),
+            topRight: Radius.circular(24),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Container(
+                    width: 36,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      Container(
+                        width: 44,
+                        height: 44,
+                        decoration: BoxDecoration(
+                          color: AppColors.secondaryContainer.withValues(
+                            alpha: 0.6,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.camera_alt_rounded,
+                          color: AppColors.secondary,
+                          size: 22,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Terrace Rooftop Capture',
+                              style: AppTypography.headlineSm.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.onSurface,
+                              ),
+                            ),
+                            Text(
+                              'Capture photo or calibrate on satellite map',
+                              style: AppTypography.bodyMd.copyWith(
+                                color: AppColors.outline,
+                                fontSize: 11,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+
+                  // Option 1: Camera
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _pickImage(ImageSource.camera);
+                    },
+                    borderRadius: AppRadii.cardSm,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.secondaryContainer.withValues(
+                          alpha: 0.2,
+                        ),
+                        borderRadius: AppRadii.cardSm,
+                        border: Border.all(
+                          color: AppColors.secondary.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.photo_camera_rounded,
+                            color: AppColors.secondary,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Take Photo with Camera',
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.onSurface,
+                                  ),
+                                ),
+                                const Text(
+                                  'Snap your roof terrace parapet directly',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.outline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColors.secondary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Option 2: Gallery
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                      _pickImage(ImageSource.gallery);
+                    },
+                    borderRadius: AppRadii.cardSm,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerLow,
+                        borderRadius: AppRadii.cardSm,
+                        border: Border.all(
+                          color: AppColors.outlineVariant.withValues(
+                            alpha: 0.4,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.photo_library_rounded,
+                            color: AppColors.primary,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Upload from Gallery',
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: AppColors.onSurface,
+                                  ),
+                                ),
+                                const Text(
+                                  'Choose an existing photo of your rooftop',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.outline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColors.primary,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Option 3: Satellite Canvas
+                  InkWell(
+                    onTap: () {
+                      Navigator.pop(sheetContext);
+                    },
+                    borderRadius: AppRadii.cardSm,
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceContainerLowest,
+                        borderRadius: AppRadii.cardSm,
+                        border: Border.all(
+                          color: AppColors.outlineVariant.withValues(
+                            alpha: 0.3,
+                          ),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.satellite_alt_rounded,
+                            color: AppColors.outline,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Use Satellite Drawing Canvas',
+                                  style: AppTypography.labelMd.copyWith(
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.onSurface,
+                                  ),
+                                ),
+                                const Text(
+                                  'Draw boundary pins on aerial satellite view',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.outline,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.chevron_right_rounded,
+                            color: AppColors.outline,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    try {
+      final picker = ImagePicker();
+      final pickedFile = await picker.pickImage(
+        source: source,
+        imageQuality: 85,
+        maxWidth: 1600,
+      );
+
+      if (pickedFile != null && mounted) {
+        await SolarSessionState().updateRooftopAnalysis(
+          grossAreaSqFt: 1440.0,
+          usableAreaSqFt: 1120.0,
+          imageUrl: pickedFile.path,
+        );
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              backgroundColor: AppColors.primary,
+              content: Text(
+                '✓ Terrace photo captured! Proceeding to AI Analysis...',
+                style: TextStyle(color: Colors.white),
+              ),
+              duration: Duration(seconds: 2),
+            ),
+          );
+          Navigator.pushNamed(context, AppRoutes.aiRoofAnalysis);
+        }
+      }
+    } catch (e) {
+      debugPrint('Error picking roof image: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not access camera or gallery: $e')),
+        );
+      }
+    }
   }
 
   void _resetVertices() {
@@ -95,6 +398,7 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
     SolarSessionState().updateRooftopAnalysis(
       grossAreaSqFt: gross,
       usableAreaSqFt: usable,
+      vertices: _vertices,
     );
     await Future.delayed(const Duration(milliseconds: 300));
     if (!mounted) return;
@@ -505,6 +809,52 @@ class _SatelliteRoofDrawingScreenState extends State<SatelliteRoofDrawingScreen>
                                   fontSize: 11,
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.onSurface,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      InkWell(
+                        onTap: _showCameraCaptureDialog,
+                        borderRadius: AppRadii.full,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceContainerLowest.withValues(
+                              alpha: 0.95,
+                            ),
+                            borderRadius: AppRadii.full,
+                            border: Border.all(
+                              color: AppColors.secondary.withValues(alpha: 0.5),
+                            ),
+                            boxShadow: const [
+                              BoxShadow(
+                                color: Color(0x0C000000),
+                                blurRadius: 6,
+                                offset: Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Icon(
+                                Icons.camera_alt_outlined,
+                                size: 14,
+                                color: AppColors.secondary,
+                              ),
+                              const SizedBox(width: 4),
+                              Text(
+                                'Camera',
+                                style: AppTypography.labelMd.copyWith(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.secondary,
                                 ),
                               ),
                             ],

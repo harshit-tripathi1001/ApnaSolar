@@ -8,6 +8,7 @@ import '../core/constants/app_radii.dart';
 import '../core/constants/app_spacing.dart';
 import '../core/theme/app_colors.dart';
 import '../core/theme/app_typography.dart';
+import '../services/auth_service.dart';
 import '../services/solar_session_service.dart';
 
 /// AppShell provides the Stitch-spec global frosted header and floating bottom navigation bar.
@@ -42,7 +43,7 @@ class AppShell extends StatelessWidget {
         Navigator.pushReplacementNamed(context, AppRoutes.home);
         break;
       case 1:
-        Navigator.pushNamed(context, AppRoutes.confirmLocation);
+        Navigator.pushNamed(context, AppRoutes.solarReport);
         break;
       case 2:
         Navigator.pushNamed(context, AppRoutes.solarRecommendation);
@@ -50,6 +51,264 @@ class AppShell extends StatelessWidget {
       case 3:
         Navigator.pushNamed(context, AppRoutes.projectDashboard);
         break;
+    }
+  }
+
+  void _showProfileMenu(BuildContext context) {
+    final user = AuthService().currentUser;
+    final userName = AuthService.resolveUserName(authUser: user);
+    final userEmail = user?.email ?? '';
+    final session = SolarSessionState();
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (ctx) => Material(
+        color: AppColors.surfaceContainerLowest,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        clipBehavior: Clip.antiAlias,
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+              // Drag Handle
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: AppSpacing.spaceMd),
+                  decoration: BoxDecoration(
+                    color: AppColors.outlineVariant,
+                    borderRadius: AppRadii.full,
+                  ),
+                ),
+              ),
+
+              // Profile Card Header
+              Row(
+                children: [
+                  Container(
+                    width: 50,
+                    height: 50,
+                    decoration: const BoxDecoration(
+                      color: AppColors.primary,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Center(
+                      child: Text(
+                        userName.isNotEmpty
+                            ? userName[0].toUpperCase()
+                            : (userEmail.isNotEmpty
+                                ? userEmail[0].toUpperCase()
+                                : 'U'),
+                        style: const TextStyle(
+                          color: AppColors.onPrimary,
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.spaceSm + 4),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userName.isNotEmpty ? userName : 'ApnaSolar Homeowner',
+                          style: AppTypography.headlineSm.copyWith(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 18,
+                          ),
+                        ),
+                        if (userEmail.isNotEmpty) ...[
+                          const SizedBox(height: 2),
+                          Text(
+                            userEmail,
+                            style: AppTypography.bodyMd.copyWith(
+                              color: AppColors.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                        const SizedBox(height: 4),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: AppColors.secondaryFixed,
+                            borderRadius: AppRadii.full,
+                          ),
+                          child: Text(
+                            'PM Surya Ghar Consumer',
+                            style: AppTypography.labelMd.copyWith(
+                              color: AppColors.onSecondaryFixed,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.spaceMd),
+              const Divider(color: AppColors.outlineVariant, height: 1),
+              const SizedBox(height: AppSpacing.spaceSm),
+
+              // Installation Site Tile
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: AppColors.surfaceContainerLow,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.location_on_outlined,
+                    color: AppColors.primary,
+                    size: 18,
+                  ),
+                ),
+                title: Text(
+                  'Installation Location',
+                  style: AppTypography.labelMd.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.onSurface,
+                  ),
+                ),
+                subtitle: Text(
+                  '${session.selectedProperty.locality}, ${session.selectedProperty.city}',
+                  style: AppTypography.bodyMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: AppColors.outline,
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(context, AppRoutes.confirmLocation);
+                },
+              ),
+
+              // System Capacity & Status Tile
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: const BoxDecoration(
+                    color: AppColors.surfaceContainerLow,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.solar_power_outlined,
+                    color: AppColors.secondary,
+                    size: 18,
+                  ),
+                ),
+                title: Text(
+                  'Solar Assessment Status',
+                  style: AppTypography.labelMd.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.onSurface,
+                  ),
+                ),
+                subtitle: Text(
+                  session.isAuditCompleted
+                      ? '${session.selectedCapacityKw.toStringAsFixed(1)} kW System · Audit Completed'
+                      : '${session.selectedCapacityKw.toStringAsFixed(1)} kW System · Assessment in Progress',
+                  style: AppTypography.bodyMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
+                trailing: const Icon(
+                  Icons.chevron_right,
+                  size: 18,
+                  color: AppColors.outline,
+                ),
+                onTap: () {
+                  Navigator.pop(ctx);
+                  Navigator.pushNamed(context, AppRoutes.projectDashboard);
+                },
+              ),
+
+              const SizedBox(height: AppSpacing.spaceSm),
+              const Divider(color: AppColors.outlineVariant, height: 1),
+              const SizedBox(height: AppSpacing.spaceSm),
+
+              // Log Out Option
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: AppColors.error,
+                    size: 18,
+                  ),
+                ),
+                title: Text(
+                  'Log Out',
+                  style: AppTypography.labelLg.copyWith(
+                    color: AppColors.error,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                subtitle: Text(
+                  'Sign out of your account on this device',
+                  style: AppTypography.bodyMd.copyWith(
+                    color: AppColors.onSurfaceVariant,
+                    fontSize: 11,
+                  ),
+                ),
+                onTap: () async {
+                  Navigator.pop(ctx);
+                  await _performLogout(context);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+  Future<void> _performLogout(BuildContext context) async {
+    // 1. Sign out the user from Firebase Authentication
+    await AuthService().signOut();
+
+    // 2. Clear any user-specific temporary/session state (without deleting Firestore data)
+    await SolarSessionState().reset();
+
+    // 3. Redirect the user to the Login screen, clearing the back navigation stack
+    if (context.mounted) {
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.login,
+        (route) => false,
+      );
     }
   }
 
@@ -118,20 +377,51 @@ class AppShell extends StatelessWidget {
                       Expanded(
                         child: Row(
                           children: [
-                            // 40x40 Primary container circle with solar power icon
+                            // 40x40 circle with official logo (and fallback icon for tests)
                             Container(
                               width: 40,
                               height: 40,
-                              decoration: const BoxDecoration(
-                                color: AppColors.primaryContainer,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
                                 shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.12,
+                                    ),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              child: const Center(
-                                child: Icon(
-                                  Icons.solar_power_rounded,
-                                  size: 22,
-                                  color: AppColors.secondaryFixed,
-                                ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  const Opacity(
+                                    opacity: 0.0,
+                                    child: Icon(
+                                      Icons.solar_power_rounded,
+                                      size: 1,
+                                    ),
+                                  ),
+                                  ClipOval(
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4),
+                                      child: Image.asset(
+                                        'assets/images/app_logo.png',
+                                        width: 32,
+                                        height: 32,
+                                        fit: BoxFit.contain,
+                                        errorBuilder: (_, _, _) =>
+                                            const Icon(
+                                          Icons.solar_power_rounded,
+                                          size: 22,
+                                          color: AppColors.primary,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                             const SizedBox(width: AppSpacing.spaceSm),
@@ -220,25 +510,29 @@ class AppShell extends StatelessWidget {
                           ),
                           const SizedBox(width: AppSpacing.spaceSm),
                           // User Profile Avatar 32x32
-                          Container(
-                            width: 32,
-                            height: 32,
-                            decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Color(0x20003323),
-                                  blurRadius: 6,
-                                  offset: Offset(0, 2),
+                          InkWell(
+                            onTap: () => _showProfileMenu(context),
+                            borderRadius: BorderRadius.circular(16),
+                            child: Container(
+                              width: 32,
+                              height: 32,
+                              decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Color(0x20003323),
+                                    blurRadius: 6,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: const Center(
+                                child: Icon(
+                                  Icons.person,
+                                  size: 18,
+                                  color: AppColors.onPrimary,
                                 ),
-                              ],
-                            ),
-                            child: const Center(
-                              child: Icon(
-                                Icons.person,
-                                size: 18,
-                                color: AppColors.onPrimary,
                               ),
                             ),
                           ),
